@@ -1,0 +1,48 @@
+body {
+    background-color: #000000;
+}
+
+label {
+    color: #FFFFFF;
+    padding: 20px 0px 20px 0px;
+}
+
+p { 
+    color: #FFFFFF;
+}
+input {
+    border-radius: 20px;
+    border-style:solid;
+    width: 300px;
+    height: 40px
+}
+
+form {
+    width: 300px;
+    margin: auto;
+    text-align: left;
+}
+
+a {
+    text-decoration: none;
+    color: #40b5e8
+}
+.content {
+    font-family: "Open Sans";
+}
+.right-content {
+    float: right;
+}
+.auth-content {
+    padding: 50px;
+    display: block;
+    text-align: center;
+}
+
+.login-button {
+    width: 300px;
+    height: 50px;
+    margin-top: 20px;
+    background-color: #40b5e8;
+    color: #FFFFFF
+}

@@ -1,6 +1,6 @@
 /* Overwrite primary theme color */
 :root {
-    --mdc-theme-primary:#40b5e8;
+    --mdc-theme-primary: #40b5e8;
 }
 
 body {
@@ -17,12 +17,6 @@ input {
     border-style: solid;
     width: 300px;
     height: 40px
-}
-
-form {
-    width: 300px;
-    margin: auto;
-    text-align: left;
 }
 
 a {
@@ -47,6 +41,8 @@ a {
 .auth-content {
     display: block;
     text-align: center;
+    width: 400px;
+    margin: auto;
 }
 
 .login-button {

@@ -2,22 +2,51 @@
 
 
 {% block content %}
+
+<!-- Styling -->
 <div class="auth-content p-5">
-  <img src="/static/assets/Level_Up_Logo.png" height="300px"alt="Level Up Logo"/>
+  <img src="/static/assets/Level_Up_Logo.png" height="300px" alt="Level Up Logo" />
   <form method="post">
-      <h3 class="pt-4">Login</h3>
-      <label class="py-2" form="username" placeholder="Username">Username</label>
-      <input name="username" id="username" placeholder="Username" required>
-      <label class="py-2" form="password">Password</label>
-      <input type="password" name="password" placeholder="Min. 8 characters" id="password" required>
-      <div class="right-content" >
-        <a href="">Forgot Password?</a>
+    <h3 class="pt-4">Login</h3>
+    <div class="py-2">
+      <label class="mdc-text-field mdc-text-field--filled  mdc-text-field--with-leading-icon">
+        <i class="material-icons mdc-text-field__icon" style="color:rgb(0, 0, 0)">person</i>
+        <span class="mdc-text-field__ripple --mdc-theme-primary"></span>
+        <span class="mdc-floating-label" id="my-label-id">Username</span>
+        <input class="mdc-text-field__input" type="text" aria-labelledby="my-label-id">
+        <span class="mdc-line-ripple --mdc-theme-primary"></span>
+      </label>
+    </div>
+    <div class="pt-2">
+      <label class="mdc-text-field mdc-text-field--filled mdc-text-field--with-leading-icon ">
+        <i class="material-icons mdc-text-field__icon" style="color:rgb(0, 0, 0)">lock</i>
+        <span class="mdc-text-field__ripple --mdc-theme-primary"></span>
+        <span class="mdc-floating-label" id="my-label-id">Password</span>
+        <input class="mdc-text-field__input" type="text" aria-labelledby="my-label-id">
+        <span class="mdc-line-ripple --mdc-theme-primary"></span>
+      </label>
+      <div class="mdc-text-field-helper-line">
+        <div class="mdc-text-field-helper-text" id="my-helper-id" aria-hidden="true">Min. 8 characters</div>
       </div>
-      <input class="login-button mt-4" type="submit" value="Log In">
+    </div>
+    <div class="right-content">
+      <a href="">Forgot Password?</a>
+    </div>
+    <button class="mdc-button mdc-button--raised mt-4 mb-2 login-button" type="submit"> <span class="mdc-button__ripple"></span> Log In
+    </button>
   </form>
   <div>
     <p>Not registered yet? <a href="/auth/register">Create an Account</a> </p>
   </div>
 </div>
+
+<!-- Instantiate single textfield component rendered in the document -->
+<script>
+  // mdc.textField.MDCTextField.attachTo(document.querySelector('.mdc-text-field'));
+  $('.mdc-text-field').each((index, element) => {
+    mdc.textField.MDCTextField.attachTo(element);
+  });
+</script>
+
 
 {% endblock %}

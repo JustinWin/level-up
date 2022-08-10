@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, render_template
 
 def create_app(test_config=None):
     """Create and configure an instance of the Flask application."""
@@ -33,6 +33,10 @@ def create_app(test_config=None):
     def index():
         return "Index Page!"
 
+    @app.route("/profile")
+    def profile():
+        return render_template("profile.html")    
+    
     # register the database commands
     import db
 

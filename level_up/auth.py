@@ -1,7 +1,7 @@
 import functools
 import re
 
-from flask import (Blueprint, flash, g, redirect, render_template, request,
+from flask import (Blueprint, g, redirect, render_template, request,
                    session, url_for)
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -90,6 +90,35 @@ def login():
                 return redirect(url_for("index"))
 
     return render_template("auth/login.html", message=message)
+
+
+@bp.route("/reset", methods=("GET", "POST"))
+def reset_password():
+
+    message = None
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+        db = get_db()
+
+        if email and password:
+
+            # Attempt to find user with email
+            user = db.execute(
+                "SELECT * FROM user WHERE email = ?", (email,)
+            ).fetchone()
+            if user is None:
+                message = "This email doesn't exist."
+
+            else:
+                db.execute(
+                    "UPDATE user SET password = ? WHERE email = ?",
+                    (generate_password_hash(password), email),
+                )
+                db.commit()
+                message = "Password reset was successful"
+
+    return render_template("auth/reset.html", message=message)
 
 
 @bp.route("/logout")

@@ -35,7 +35,7 @@ def create_app(test_config=None):
 
     @app.route("/profile")
     def profile():
-        return render_template("profile.html")    
+        return render_template("profile.html", message = "Username", alert = "alert-success")    
     
     # register the database commands
     import db

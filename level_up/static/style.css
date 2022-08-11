@@ -32,6 +32,9 @@ a {
 .right-content {
     float: right;
 }
+.left-content {
+    float: left;
+}
 .auth-content {
     display: block;
     text-align: center;
@@ -43,11 +46,33 @@ a {
     background-color: #40b5e8;
     color: #FFFFFF
 }
-.material-symbols-outlined {
-  font-variation-settings:
-  'FILL' 0,
-  'wght' 400,
-  'GRAD' 0,
-  'opsz' 48,;
-  font-size: "300px";
+
+.profile_img{
+    padding: 30px;
+}
+
+.profile_page_content{
+    font-family: "Open Sans";
+    color: #4d4d4d;
+    display: block;
+    text-align: center;
+    margin-left: 600px;
+    margin-right: 600px;
+    margin-top: 50px;
+}
+
+.carousel{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    margin-left: 600px;
+    margin-right: 600px;
+}
+
+.carousel .item{
+    position: absolute;
+    width: 100%;
+    height: 100;
+    text-align: center;
 }

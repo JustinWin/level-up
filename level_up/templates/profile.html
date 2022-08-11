@@ -18,23 +18,33 @@
 </head>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-<body class="profile_page_content">
+<body >
   <header>
 
   </header>
   
-	<div>
-    <img src="/static/assets/profile_icon.png" height="300px"alt="Profile Icon" class="profile_img"/>
-	</div>
-  <div class="alert {{ alert_type }}" id="alert"> 
-    <p style="font-size:40px;color:#40b5e8"> {{ message }} </p> 
+  <div class="profile_page_content">
+    <div>
+      <img src="/static/assets/profile_icon.png" height="300px"alt="Profile Icon" class="profile_img"/>
+    </div>
+    <div class="alert {{ alert_type }}" id="alert"> 
+      <p style="font-size:40px;color:#40b5e8"> {{ message }} </p> 
+    </div>
   </div>
 
-  <div>
-    <p class="left-content" style="font-size:50px;color:#40b5e8;">Badges</p>
-  </div>
-  <div class="carousel">
-    <div class="badge"><img src="/static/assets/profile_icon.png" height="300px"alt="Profile Icon" class="profile_img"/></div>
-    <div class="badge"><img src="/static/assets/profile_icon.png" height="300px"alt="Profile Icon" class="profile_img"/></div>
-  </div>
-</body>
+  <div class="profile_page_headers">
+    <div>
+      <p style="font-size:50px;color:#40b5e8;">Badges</p>
+    </div>
+
+    <div>
+      <p style="font-size:50px;color:#40b5e8;">Skills</p>
+    </div>
+
+    <div>
+      <p style="font-size:35px;color:#40b5e8;padding-left:40px;">Learning</p>
+      <p style="font-size:35px;color:#40b5e8;padding-left:40px;">Working</p>
+      <p style="font-size:35px;color:#40b5e8;padding-left:40px;">Exercising</p>
+    </div>
+</div>
+  </body>

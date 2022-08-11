@@ -1,4 +1,5 @@
 import os
+from flask import Flask, request, render_template, g
 
 from flask import Flask
 
@@ -48,5 +49,15 @@ def create_app(test_config=None):
     # app.route, while giving the blog blueprint a url_prefix, but for
     # the tutorial the blog will be the main index
     app.add_url_rule("/", endpoint="")
+
+    @app.route("/task", methods=["GET", "POST"])
+    def task():
+        #TODO check user
+        if request.method == "POST":
+            #add task to db
+            print(g.user)
+            print("POST for task")
+        #TODo pull tasks from DB
+        return render_template("task/task.html")
 
     return app

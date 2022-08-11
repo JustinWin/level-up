@@ -7,6 +7,7 @@ CREATE TABLE user (
   password TEXT NOT NULL
 );
 
+--TODO delete this
 CREATE TABLE post (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   author_id INTEGER NOT NULL,

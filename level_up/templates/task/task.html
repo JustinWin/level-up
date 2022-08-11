@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div id="task-container">
+	<button id="show-add-task-container-button">Add Task</button>
+	<div id="add-task-container">
+		<form method="post">
+			<input name="task-name" id="task-name" placeholder="Task Name" required>
+			<input type="number" name="task-time" id="task-time" placeholder="00" min="0" max="1440">
+			<input type="submit" id="add-task-submit-button" value="Add Task">
+		</form>
+	</div>
+	<div id="task-container"></div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+	addEventListener('DOMContentLoaded', (event) => {
+		addTaskButton = document.getElementById("show-add-task-container-button");
+		addTaskButton.addEventListener("click", function() {
+			let container = document.getElementById("add-task-container");
+			container.style.display = "block";
+		});
+	});
+</script>
+
+{% endblock %}

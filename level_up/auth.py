@@ -1,15 +1,9 @@
 import functools
+import re
 
-from flask import Blueprint
-from flask import flash
-from flask import g
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import session
-from flask import url_for
-from werkzeug.security import check_password_hash
-from werkzeug.security import generate_password_hash
+from flask import (Blueprint, g, redirect, render_template, request,
+                   session, url_for)
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from db import get_db
 
@@ -49,63 +43,82 @@ def register():
     Validates that the username is not already taken. Hashes the
     password for security.
     """
+    message = None
     if request.method == "POST":
-        username = request.form["username"]
+        email = request.form["email"]
         password = request.form["password"]
         db = get_db()
-        error = None
-
-        if not username:
-            error = "Username is required."
-        elif not password:
-            error = "Password is required."
-
-        if error is None:
+        if message is None:
             try:
                 db.execute(
-                    "INSERT INTO user (username, password) VALUES (?, ?)",
-                    (username, generate_password_hash(password)),
+                    "INSERT INTO user (email, password) VALUES (?, ?)",
+                    (email, generate_password_hash(password)),
                 )
                 db.commit()
             except db.IntegrityError:
-                # The username was already taken, which caused the
+                # The email was already taken, which caused the
                 # commit to fail. Show a validation error.
-                error = f"User {username} is already registered."
+                message = f"This email already exists."
+
             else:
-                # Success, go to the login page.
-                return redirect(url_for("auth.login"))
+                # Success, go to the index page.
+                return redirect(url_for("index"))
 
-        flash(error)
-
-    return render_template("auth/register.html")
+    return render_template("auth/register.html", message=message)
 
 
 @bp.route("/login", methods=("GET", "POST"))
 def login():
     """Log in a registered user by adding the user id to the session."""
+    message = None
     if request.method == "POST":
-        username = request.form["username"]
+        email = request.form["email"]
         password = request.form["password"]
         db = get_db()
-        error = None
         user = db.execute(
-            "SELECT * FROM user WHERE username = ?", (username,)
+            "SELECT * FROM user WHERE email = ?", (email,)
         ).fetchone()
 
-        if user is None:
-            error = "Incorrect username."
-        elif not check_password_hash(user["password"], password):
-            error = "Incorrect password."
+        if email and password:
+            if user is None or not check_password_hash(user["password"], password):
+                message = "You have entered an invalid email or password."
 
-        if error is None:
-            # store the user id in a new session and return to the index
-            session.clear()
-            session["user_id"] = user["id"]
-            return redirect(url_for("index"))
+            if message is None:
+                # store the user id in a new session and return to the index
+                session.clear()
+                session["user_id"] = user["id"]
+                return redirect(url_for("index"))
 
-        flash(error)
+    return render_template("auth/login.html", message=message)
 
-    return render_template("auth/login.html")
+
+@bp.route("/reset", methods=("GET", "POST"))
+def reset_password():
+
+    message = None
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+        db = get_db()
+
+        if email and password:
+
+            # Attempt to find user with email
+            user = db.execute(
+                "SELECT * FROM user WHERE email = ?", (email,)
+            ).fetchone()
+            if user is None:
+                message = "This email doesn't exist."
+
+            else:
+                db.execute(
+                    "UPDATE user SET password = ? WHERE email = ?",
+                    (generate_password_hash(password), email),
+                )
+                db.commit()
+                message = "Password reset was successful"
+
+    return render_template("auth/reset.html", message=message)
 
 
 @bp.route("/logout")

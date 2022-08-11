@@ -35,7 +35,6 @@ def load_logged_in_user():
     the database into ``g.user``."""
     user_id = session.get("user_id")
 
-    print("before app request")
     if user_id is None:
         g.user = None
     else:

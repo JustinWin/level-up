@@ -52,11 +52,15 @@ def create_app(test_config=None):
 
     @app.route("/task", methods=["GET", "POST"])
     def task():
-        #TODO check user
+        if g.user == None:
+            return "Please Login"
+
         if request.method == "POST":
             #add task to db
-            print(g.user)
             print("POST for task")
+            print(g.user)
+            print(request.data)
+
         #TODo pull tasks from DB
         return render_template("task/task.html")
 

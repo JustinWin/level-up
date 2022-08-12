@@ -86,4 +86,7 @@ a {
   width: 1%;
   height: 30px;
   background-color: rgb(111, 231, 255);
+  text-align: center;
+  line-height: 30px;
+  color: rgb(0, 0, 0);
 }

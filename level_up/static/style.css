@@ -1,44 +1,49 @@
+/* Overwrite primary theme color */
+:root {
+    --mdc-theme-primary: #40b5e8;
+}
+
 body {
     background-color: #000000;
 }
 
 label {
     color: #FFFFFF;
+    width: 100%;
 }
 
 input {
     border-radius: 20px;
-    border-style:solid;
+    border-style: solid;
     width: 300px;
     height: 40px
-}
-
-form {
-    width: 300px;
-    margin: auto;
-    text-align: left;
 }
 
 a {
     text-decoration: none;
     color: #40b5e8
 }
+
 .content {
     font-family: "Open Sans";
     color: #4d4d4d;
     display: block;
     text-align: center;
 }
+
+/* Change color of hidden character minimum on login screen */
+.mdc-text-field:not(.mdc-text-field--disabled)+.mdc-text-field-helper-line .mdc-text-field-helper-text {
+    color: #FFFFFF
+}
+
 .right-content {
     float: right;
-}
-.left-content {
-    display: block;
-    float: left;
 }
 .auth-content {
     display: block;
     text-align: center;
+    width: 400px;
+    margin: auto;
 }
 
 .login-button {

@@ -1,23 +1,30 @@
 {% extends 'base.html' %}
 
-
 {% block content %}
+<!-- Styling -->
 <div class="auth-content p-5">
-  <img src="/static/assets/Level_Up_Logo.png" height="300px"alt="Level Up Logo"/>
+  <img src="/static/assets/Level_Up_Logo.png" height="300px" alt="Level Up Logo" />
+  <h3 class="pt-4">Log in</h3>
   <form method="post">
-      <h3 class="pt-4">Login</h3>
-      <label class="py-2" form="username" placeholder="Username">Username</label>
-      <input name="username" id="username" placeholder="Username" required>
-      <label class="py-2" form="password">Password</label>
-      <input type="password" name="password" placeholder="Min. 8 characters" id="password" required>
-      <div class="right-content" >
-        <a href="">Forgot Password?</a>
-      </div>
-      <input class="login-button mt-4" type="submit" value="Log In">
+    {% include "auth/auth_form.html" %}
+    <div class="right-content">
+      <a href="/auth/reset">Forgot Password?</a>
+    </div>
+    <button class="mdc-button mdc-button--raised mt-4 mb-2 login-button" type="submit"> <span
+        class="mdc-button__ripple"></span> Log In </button>
   </form>
+
   <div>
     <p>Not registered yet? <a href="/auth/register">Create an Account</a> </p>
   </div>
 </div>
+
+<!-- Instantiate textfield components rendered in the document -->
+<script>
+  $('.mdc-text-field').each((index, element) => {
+    mdc.textField.MDCTextField.attachTo(element);
+  });
+</script>
+
 
 {% endblock %}

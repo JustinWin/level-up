@@ -19,9 +19,10 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
 <body >
-  <header>
-
-  </header>
+  <div class="nav_bar">
+    <a href="" style="float:left;margin-top:20px;font-size:30px">Back</a>
+    <button style="float:right;" class="mdc-button mdc-button--raised mt-4 mb-2 login-button">Logout</button>
+  </div>
   
   <div class="profile_page_content">
     <div>
@@ -42,17 +43,17 @@
     </div>
 
     <div>
-      <p style="font-size:35px;color:#40b5e8;padding-left:40px;">Learning</p>
+      <p style="font-size:35px;color:#40b5e8;">Learning</p>
       <div class="expBar">
         <div id="learnBar" class="expFill">Lv.1</div>
       </div>
 
-      <p style="font-size:35px;color:#40b5e8;padding-left:40px;">Working</p>
+      <p style="font-size:35px;color:#40b5e8;">Working</p>
       <div class="expBar">
         <div id="workBar" class="expFill">Lv.1</div>
       </div>
 
-      <p style="font-size:35px;color:#40b5e8;padding-left:40px;">Exercising</p>
+      <p style="font-size:35px;color:#40b5e8;">Exercising</p>
       <div class="expBar">
         <div id="exerciseBar" class="expFill">Lv.1</div>
       </div>

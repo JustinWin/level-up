@@ -7,29 +7,41 @@
 		<form method="post">
 			<input name="task-name" id="task-name" placeholder="Task Name" required>
 			<input type="number" name="task-time" id="task-time" placeholder="00" min="0" max="1440">
-			<input type="button" id="add-task-submit-button" value="Add Task">
+			<input type="submit" id="add-task-submit-button" value="Add Task">
 		</form>
 	</div>
-	<div id="task-container"></div>
+	<div id="task-list-container" class="float-container">
+		{% for task in tasks %}
+		<div class="task-name-container">
+			{{ task.task_name }}
+		</div>
+		<div class="task-time-container">
+			{{ task.task_time_minutes}}
+		</div>
+		<button class="play-button">Play</button>
+		{% endfor %}
+	</div>
 </div>
 
 {% endblock %}
 
 {% block javascript %}
 <script>
+	let ONE_SECOND = 1000; // miliseconds
+	let alarmClockArray = Array(document.getElementsByClassName("play-button").length);
+	
+	/*
 	async function postData(url, data) {
-		console.log("before Post infunc");
 		const response = await fetch(url, {
 			method: 'POST', // or 'PUT'
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({"foo":1})
+			body: JSON.stringify(data)
 		});
-		console.log("after Post infunc");
-		return response.json(); // parses JSON response into native JavaScript objects
+		return 1;//response.json(); // parses JSON response into native JavaScript objects
 	}
-
+*/
 	addEventListener('DOMContentLoaded', (event) => {
 		document.getElementById("show-add-task-container-button").addEventListener("click", function() {
 			let container = document.getElementById("add-task-container");
@@ -38,13 +50,36 @@
 			showContainterButton.style.display = "none";
 		});
 	});
-
-	document.getElementById("add-task-submit-button").addEventListener("click", async function() {
-		const location = window.location.hostname;
-		console.log("before Post");
-		postData('/task', {"foo": 1});
-		console.log("after Post");
+/*
+	document.getElementById("add-task-submit-button").addEventListener("click", function() {
+		let task = '{"foo":1}';
+		const object = JSON.parse(j); 
+		postData('/task', o);
 	});
+	*/
+	
+	playButtons = document.getElementsByClassName("play-button");
+	for (let i = 0; i < playButtons.length; i++) {
+        playButtons[i].addEventListener("click", function() {
+			if (playButtons[i].textContent == "Play") {
+				playButtons[i].textContent = "Pause";
+				alarmClockArray[i] = setInterval(function() {
+					//TODO change if organization of nodes change
+					let currentTimeLeft = parseInt(playButtons[i].previousElementSibling.textContent);
+					if (currentTimeLeft > 0) {
+						playButtons[i].previousElementSibling.textContent = currentTimeLeft - 1;
+					}
+					else {
+						clearInterval(alarmClockArray[i])
+					}
+				}, ONE_SECOND);
+			}
+			else {
+				playButtons[i].textContent = "Play";
+				clearInterval(alarmClockArray[i]);
+			}
+		})
+    }
 </script>
 
 {% endblock %}

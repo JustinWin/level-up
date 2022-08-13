@@ -47,3 +47,22 @@ a {
 {
 	display:none
 }
+
+#task-list-container {
+    border: 3px solid #fff;
+    padding: 20px;
+}
+
+.task-name-container, .task-time-container{
+    width: 40%;
+    float: left;
+    padding: 20px;
+    border: 2px solid red;
+}  
+
+.play-button {
+    width: 20%;
+    float: left;
+    padding: 20px;
+    border: 2px solid red;
+}  

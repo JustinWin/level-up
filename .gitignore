@@ -13,3 +13,4 @@ dist/
 build/
 *.egg-info/
 .vscode/tasks.json
+.vscode/tasks.json

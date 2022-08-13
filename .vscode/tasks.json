@@ -6,7 +6,7 @@
         {
             "label": "initdatabase",
             "type": "shell",
-            "command": "cd level_up | flask init-db"
+            "command": "cd level_up | py -m flask init-db"
         }
     ]
 }

@@ -69,23 +69,26 @@ def create_app(test_config=None):
                 error = "Task name is required."
             elif not taskTime:
                 error = "Task time is required."
-            print("her")
+
             if error is None:
                 try:
                     cursor.execute(
                         "INSERT INTO tasks (user_id, task_name, task_time_minutes) VALUES (?, ?, ?)",
                         (session.get("user_id"), taskName, taskTime),
                     )
-                    cursor.commit()
-                except Exception:
+                    connection.commit()
+                    print("Insert Complete----------------------------")
+                except Exception as e:
                     error = "Error"
+                    print("error!!!!!!!!!!!")
+                    print(e)
 
             #print(error)
 
         tasks = cursor.execute("SELECT * FROM tasks WHERE user_id = ?", (session.get("user_id"),)).fetchall()
         for task in tasks:   
             print(task['user_id'], end=' ')
-            print(task['task_name'], end='')
+            print(task['task_name'], end=' ')
             print(task['task_time_minutes'])
         return render_template("task/task.html", tasks=tasks)
 

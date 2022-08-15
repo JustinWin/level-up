@@ -1,9 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="nav_bar">
-  <a href="" style="float:left;margin-top:20px;font-size:30px">Back</a>
-  <button style="float:right;" class="mdc-button mdc-button--raised mt-4 mb-2 login-button">Logout</button>
-</div>
+{% include "nav/navbar.html" %}
 
 <div class="profile_page_content">
   <div>
@@ -131,5 +128,11 @@
     }
   }
   exerExp();
+
+  // Initalizes Navigation Bar
+  $('.mdc-tab-bar').each((index, element) => {
+    mdc.tabBar.MDCTabBar.attachTo(element);
+  });
+
 </script>
 {% endblock %}

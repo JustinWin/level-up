@@ -19,7 +19,12 @@
   </div>
 </div>
 
-
+<!-- Instantiate textfield components rendered in the document -->
+<script>
+  $('.mdc-text-field').each((index, element) => {
+    mdc.textField.MDCTextField.attachTo(element);
+  });
+</script>
 
 
 {% endblock %}

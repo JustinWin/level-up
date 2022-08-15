@@ -1,7 +1,7 @@
 import os
-from flask import Flask, request, render_template, g, session
+import json
+from flask import Flask, request, render_template, g, session, jsonify
 
-from flask import Flask
 
 def create_app(test_config=None):
     """Create and configure an instance of the Flask application."""
@@ -59,10 +59,9 @@ def create_app(test_config=None):
         cursor = connection.cursor()
 
         if request.method == "POST":
-            print("POST for task")
-            #print(request.data)
-            taskName = request.form['task-name']
-            taskTime = request.form['task-time']
+            postData = json.loads(request.data.decode('utf-8'))
+            taskName = postData['task-name']
+            taskTime = postData['task-time']
             error = None
 
             if not taskName:
@@ -73,23 +72,20 @@ def create_app(test_config=None):
             if error is None:
                 try:
                     cursor.execute(
-                        "INSERT INTO tasks (user_id, task_name, task_time_minutes) VALUES (?, ?, ?)",
+                        "INSERT INTO tasks (user_id, task_name, task_time_seconds) VALUES (?, ?, ?)",
                         (session.get("user_id"), taskName, taskTime),
                     )
                     connection.commit()
-                    print("Insert Complete----------------------------")
+                    newTask = { 'task-name': taskName, 'task-time': taskTime, 'error': 0 }
+                    return jsonify(newTask)
                 except Exception as e:
                     error = "Error"
-                    print("error!!!!!!!!!!!")
                     print(e)
+                    return jsonify({"error": 1})
 
-            #print(error)
+            print("error", error)
 
         tasks = cursor.execute("SELECT * FROM tasks WHERE user_id = ?", (session.get("user_id"),)).fetchall()
-        for task in tasks:   
-            print(task['user_id'], end=' ')
-            print(task['task_name'], end=' ')
-            print(task['task_time_minutes'])
         return render_template("task/task.html", tasks=tasks)
 
     return app

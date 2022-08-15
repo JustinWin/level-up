@@ -63,6 +63,10 @@ a {
     padding: 20px;
 }
 
+.float-container {
+    display: block;
+}
+
 .task-name-container, .task-time-container{
     width: 40%;
     float: left;

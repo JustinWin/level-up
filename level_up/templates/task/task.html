@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div id="task-container">
+	<button id="show-add-task-container-button">Add Task</button>
+	<div id="add-task-container">
+		<form method="post">
+			<input name="task-name" id="task-name" placeholder="Task Name" required>
+			<input type="number" name="task-time" id="task-time" placeholder="00" min="0" max="1440">
+			<input type="reset" id="add-task-submit-button" value="Add Task">
+		</form>
+	</div>
+	<div id="task-list-container">
+		{% for task in tasks %}
+		<div class="float-container">
+			<div class="task-name-container">
+				{{ task.task_name }}
+			</div>
+			<div class="task-time-container">
+				{{ task.task_time_seconds}}
+			</div>
+			<button class="play-button">Play</button>
+		</div>
+		{% endfor %}
+	</div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+	let ONE_SECOND = 1000; // miliseconds
+	// Array to store a setInterval for all the tasks
+	let alarmClockArray = [];
+
+	// Generic POST function for adding tasks
+	async function addTaskPost(url, data) {
+		const response = await fetch(url, {
+			method: 'POST', // or 'PUT'
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(data)
+		});
+		let responseJson = await response.json(); // parses JSON response into native JavaScript objects
+
+		if (responseJson.error == 0) {
+			let taskListContainer = document.getElementById("task-list-container");
+			let row = document.createElement("div");
+			row.classList.add("float-container");
+			let taskNameContainer = document.createElement("div");
+			taskNameContainer.classList.add("task-name-container");
+			taskNameContainer.textContent = responseJson['task-name'];
+			let taskTimeContainer = document.createElement("div");
+			taskTimeContainer.classList.add("task-time-container");
+			taskTimeContainer.textContent = responseJson['task-time'];
+			let playButton = document.createElement("button");
+			playButton.classList.add("play-button");
+			playButton.textContent = "Play";
+
+			row.append(taskNameContainer);
+			row.append(taskTimeContainer);
+			row.append(playButton);
+
+			//Similar to adding eventListenter for playButtons below.
+			//newestTaskIndex is used for the array to store setInterval values
+			let newestTaskIndex = document.getElementById("task-list-container").children.length;
+			playButton.addEventListener("click", function() {
+				if (this.textContent == "Play") {
+					this.textContent = "Pause";
+					// setInterval occurs infinitely until clearInterval
+					alarmClockArray[newestTaskIndex] = (setInterval(function() {
+						//TODO change if organization of nodes change
+						let currentTimeLeft = parseInt(taskTimeContainer.textContent);
+						if (currentTimeLeft > 0) {
+							taskTimeContainer.textContent = currentTimeLeft - 1;
+						}
+						else {
+							clearInterval(alarmClockArray[newestTaskIndex])
+						}
+					}, ONE_SECOND));
+				}
+				else {
+					this.textContent = "Play";
+					clearInterval(alarmClockArray[newestTaskIndex]);
+				}
+			});
+	
+			taskListContainer.append(row);
+		}
+	}
+
+	addEventListener('DOMContentLoaded', (event) => {
+		document.getElementById("show-add-task-container-button").addEventListener("click", function() {
+			let container = document.getElementById("add-task-container");
+			container.style.display = "block";
+			let showContainterButton = document.getElementById("show-add-task-container-button");
+			showContainterButton.style.display = "none";
+		});
+	});
+
+	document.getElementById("add-task-submit-button").addEventListener("click", function() {
+		taskName = document.getElementById("task-name").value;
+        taskTime = document.getElementById("task-time").value;
+		addTaskPost('/task', { 'task-name': taskName, 'task-time': taskTime });
+	});
+
+	
+	playButtons = document.getElementsByClassName("play-button");
+	for (let i = 0; i < playButtons.length; i++) {
+        playButtons[i].addEventListener("click", function() {
+			if (playButtons[i].textContent == "Play") {
+				playButtons[i].textContent = "Pause";
+				alarmClockArray[i] = setInterval(function() {
+					//TODO change if organization of nodes change
+					let currentTimeLeft = parseInt(playButtons[i].previousElementSibling.textContent);
+					if (currentTimeLeft > 0) {
+						playButtons[i].previousElementSibling.textContent = currentTimeLeft - 1;
+					}
+					else {
+						clearInterval(alarmClockArray[i])
+					}
+				}, ONE_SECOND);
+			}
+			else {
+				playButtons[i].textContent = "Play";
+				clearInterval(alarmClockArray[i]);
+			}
+		})
+    }
+</script>
+
+{% endblock %}

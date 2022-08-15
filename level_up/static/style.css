@@ -26,7 +26,9 @@ a {
 
 .content {
     font-family: "Open Sans";
-    color: #FFFFFF;
+    color: #ffffff;
+    display: block;
+    text-align: center;
 }
 
 /* Change color of hidden character minimum on login screen */
@@ -37,7 +39,6 @@ a {
 .right-content {
     float: right;
 }
-
 .auth-content {
     display: block;
     text-align: center;
@@ -80,3 +81,49 @@ a {
     padding: 20px;
     border: 2px solid red;
 }  
+
+
+.profile_img{
+    padding: 30px;
+}
+
+.profile_page_content{
+    font-family: "Open Sans";
+    color: #4d4d4d;
+    display: block;
+    text-align: center;
+    margin-left: 600px;
+    margin-right: 600px;
+    margin-top: 50px;
+}
+
+.profile_page_headers{
+    margin-left: 600px;
+    margin-right: 600px;
+    margin-top: 50px;
+    font-family: "Open Sans";
+    display: block;
+}
+.expBar{
+  margin-bottom: 50px;
+  display: block;
+  width: 100%;
+  background-color: rgb(117, 117, 117);
+}
+.expFill{
+  width: 1%;
+  height: 30px;
+  background-color: rgb(111, 231, 255);
+  text-align: center;
+  line-height: 30px;
+  color: rgb(0, 0, 0);
+}
+.nav_bar{
+  width: auto;
+  margin: auto;
+  font-size: larger;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+  padding-bottom: 30px;
+}

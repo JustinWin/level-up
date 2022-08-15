@@ -1,6 +1,7 @@
 import os
+import json
+from flask import Flask, request, render_template, g, session, jsonify
 
-from flask import Flask, render_template
 
 def create_app(test_config=None):
     """Create and configure an instance of the Flask application."""
@@ -52,5 +53,43 @@ def create_app(test_config=None):
     # app.route, while giving the blog blueprint a url_prefix, but for
     # the tutorial the blog will be the main index
     app.add_url_rule("/", endpoint="")
+
+    @app.route("/task", methods=["GET", "POST"])
+    def task():
+        if g.user == None:
+            return "Please Login"
+
+        connection = db.get_db()
+        cursor = connection.cursor()
+
+        if request.method == "POST":
+            postData = json.loads(request.data.decode('utf-8'))
+            taskName = postData['task-name']
+            taskTime = postData['task-time']
+            error = None
+
+            if not taskName:
+                error = "Task name is required."
+            elif not taskTime:
+                error = "Task time is required."
+
+            if error is None:
+                try:
+                    cursor.execute(
+                        "INSERT INTO tasks (user_id, task_name, task_time_seconds) VALUES (?, ?, ?)",
+                        (session.get("user_id"), taskName, taskTime),
+                    )
+                    connection.commit()
+                    newTask = { 'task-name': taskName, 'task-time': taskTime, 'error': 0 }
+                    return jsonify(newTask)
+                except Exception as e:
+                    error = "Error"
+                    print(e)
+                    return jsonify({"error": 1})
+
+            print("error", error)
+
+        tasks = cursor.execute("SELECT * FROM tasks WHERE user_id = ?", (session.get("user_id"),)).fetchall()
+        return render_template("task/task.html", tasks=tasks)
 
     return app

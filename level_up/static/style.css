@@ -36,9 +36,33 @@ a {
     color: #FFFFFF
 }
 
+/* Change importance of using primary theme color */
+.mdc-tab--active .mdc-tab__text-label {
+    color: #6200ee;
+    color: var(--mdc-theme-primary, #6200ee) !important;
+}
+
+/* Change importance of using primary theme color */
+.mdc-tab--active .mdc-tab__icon {
+    color: #6200ee;
+    color: var(--mdc-theme-primary, #6200ee) !important;
+}
+
+
+/* Change color of unselected navigation menu item */
+.mdc-tab .mdc-tab__text-label {
+    color: rgb(255 255 255 / 60%);
+}
+
+/* Change color of unselected navigation menu icon */
+.mdc-tab .mdc-tab__icon {
+    color: rgb(255 255 255 / 60%);
+}
+
 .right-content {
     float: right;
 }
+
 .auth-content {
     display: block;
     text-align: center;
@@ -53,12 +77,6 @@ a {
     color: #FFFFFF
 }
 
-/*Task List page*/
-#add-task-container
-{
-	display:none
-}
-
 #task-list-container {
     border: 3px solid #fff;
     padding: 20px;
@@ -68,26 +86,27 @@ a {
     display: block;
 }
 
-.task-name-container, .task-time-container{
+.task-name-container,
+.task-time-container {
     width: 40%;
     float: left;
     padding: 20px;
     border: 2px solid red;
-}  
+}
 
 .play-button {
     width: 20%;
     float: left;
     padding: 20px;
     border: 2px solid red;
-}  
+}
 
 
-.profile_img{
+.profile_img {
     padding: 30px;
 }
 
-.profile_page_content{
+.profile_page_content {
     font-family: "Open Sans";
     color: #4d4d4d;
     display: block;
@@ -97,33 +116,36 @@ a {
     margin-top: 50px;
 }
 
-.profile_page_headers{
+.profile_page_headers {
     margin-left: 600px;
     margin-right: 600px;
     margin-top: 50px;
     font-family: "Open Sans";
     display: block;
 }
-.expBar{
-  margin-bottom: 50px;
-  display: block;
-  width: 100%;
-  background-color: rgb(117, 117, 117);
+
+.expBar {
+    margin-bottom: 50px;
+    display: block;
+    width: 100%;
+    background-color: rgb(117, 117, 117);
 }
-.expFill{
-  width: 1%;
-  height: 30px;
-  background-color: rgb(111, 231, 255);
-  text-align: center;
-  line-height: 30px;
-  color: rgb(0, 0, 0);
+
+.expFill {
+    width: 1%;
+    height: 30px;
+    background-color: rgb(111, 231, 255);
+    text-align: center;
+    line-height: 30px;
+    color: rgb(0, 0, 0);
 }
-.nav_bar{
-  width: auto;
-  margin: auto;
-  font-size: larger;
-  margin-bottom: 20px;
-  margin-left: 20px;
-  margin-right: 20px;
-  padding-bottom: 30px;
+
+.nav_bar {
+    width: auto;
+    margin: auto;
+    font-size: larger;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding-bottom: 30px;
 }

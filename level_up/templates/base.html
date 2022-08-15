@@ -42,7 +42,19 @@
     </header>
     {% block content %}{% endblock %}
   </section>
-  {% block javascript %}{% endblock %}
+  {% block javascript %}
+  {% endblock %}
+  <script>
+    // Initalizes Navigation Bar
+    $('.mdc-tab-bar').each((index, element) => {
+      mdc.tabBar.MDCTabBar.attachTo(element);
+    });
+
+    // Initalizes Text Fields
+    $('.mdc-text-field').each((index, element) => {
+      mdc.textField.MDCTextField.attachTo(element);
+    });
+  </script>
 </body>
 
 </html>

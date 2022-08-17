@@ -87,6 +87,12 @@ a {
     padding: 30px;
 }
 
+.modal-body{
+    font-size: 50px;
+    font-family: "Open Sans";
+    background-color: #414141;
+}
+
 .profile_page_content{
     font-family: "Open Sans";
     color: #4d4d4d;

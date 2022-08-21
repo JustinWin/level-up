@@ -41,7 +41,7 @@ def create_app(test_config=None):
             cursor = connection.cursor()
             Exp = cursor.execute("SELECT email FROM user WHERE id = ?", session.get("id")).fetchall
 
-        return render_template("profile.html", exp = Exp, tab='profile')    
+        return render_template("profile.html", exp = Exp, tab='profile') 
     
     # register the database commands
     import db

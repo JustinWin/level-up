@@ -2,7 +2,7 @@ import functools
 import re
 
 from flask import (Blueprint, g, redirect, render_template, request,
-                   session, url_for)
+                   session, url_for, flash)
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from db import get_db
@@ -63,7 +63,6 @@ def register():
             else:
                 # Success, go to the index page.
                 return redirect(url_for("auth.login"))
-
     return render_template("auth/register.html", message=message)
 
 

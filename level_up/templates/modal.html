@@ -1,20 +1,21 @@
 <!-- Modal -->
-<div class="modal fade show" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-modal="true" style="display: block" role="dialog">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class= "modal fade" id="task-complete-modal" data-bs-backdrop= "static" data-backdrop="false" tabindex="-1" aria-labelledby="task-complete-modal" aria-modal="true"
+  style="display: none" role="dialog">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body bg-dark">
+        <div>
+          <img src="/static/assets/Level_Up_Logo_No_Text.png" height="300px" alt="Logo_NoText" class="profile_img" />
         </div>
-        <div class="modal-body">
-          <div>
-            <img src="/static/assets/Level_Up_Logo_No_Text.png" height="300px" alt="Logo_NoText" class="profile_img" />
-          </div>
-          <p>Task Completed</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary">Confirm</button>
-        </div>
+        <strong>Task Completed</strong>
+        <h2>Experience Points Gained</h2>
+        <h2 id="exp-gain" style="color: #2dff00"></h2>
+      </div>
+      <div class="modal-footer bg-dark">
+        <button id="close-modal" data-bs-dismiss="modal" class="mdc-button mdc-button--raised mt-4 mb-2 w-100">
+          <span class="mdc-button__ripple"></span> Confirm
+        </button>
       </div>
     </div>
   </div>
+</div>

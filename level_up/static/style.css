@@ -116,6 +116,15 @@ a {
     display: block;
 }
 
+
+.modal-header {
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-top: none;
+}
+
 .expBar {
     margin-bottom: 50px;
     display: block;

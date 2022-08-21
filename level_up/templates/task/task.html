@@ -11,6 +11,8 @@
 
 </button>
 
+{% include "modal.html" %}
+
 <div id="add-task-container" class="collapse" aria-labelledby="add-task-container">
 	<div class="w-50 card card-body text-bg-dark justify-content-center d-inline-block text-start">
 		<form method="post">
@@ -233,7 +235,7 @@
 				console.log(input_hours)
 				let intervalTimer;
 				let timeLeft;
-				let wholeTime = input_hours*3600 + input_minutes*60 + input_seconds; // manage this to set the whole time in seconds
+				let wholeTime = input_hours * 3600 + input_minutes * 60 + input_seconds; // manage this to set the whole time in seconds
 				let isPaused = false;
 				let isStarted = false;
 
@@ -264,6 +266,30 @@
 							displayTimeLeft(wholeTime);
 							pauseBtn.classList.remove('pause');
 							pauseBtn.classList.add('play');
+
+							// When timer hits zero, display task completed modal
+							var task_complete_modal = new bootstrap.Modal(document.getElementById('task-complete-modal'), {
+								keyboard: false
+							})
+
+							document.getElementById("exp-gain").innerHTML = "+ " + wholeTime + " XP"
+							task_complete_modal.show();
+							function close_modal() {
+								let close_modal_backdrop = $(".modal-backdrop")
+								close_modal_backdrop.remove();
+							}
+
+							close_modal_button = $("#close-modal")[0];
+							close_modal_button.addEventListener('click', close_modal);
+							
+							let content_container = $(".content");
+							let modal_backdrop = document.createElement("div");
+							modal_backdrop.classList.add("modal-backdrop", "fade", "show");
+						
+							content_container.append(modal_backdrop);
+
+							postRequest('/task', { 'event': 'update', 'exp': wholeTime });
+							
 							return;
 						}
 						displayTimeLeft(timeLeft);
@@ -296,7 +322,7 @@
 
 				function displayTimeLeft(timeLeft) { //displays time on the input
 					let hours = Math.floor(timeLeft / 3600);
-					let minutes = Math.floor((timeLeft-(hours*3600)) / 60);
+					let minutes = Math.floor((timeLeft - (hours * 3600)) / 60);
 					let seconds = timeLeft % 60;
 					let displayString = `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 					displayOutput.textContent = displayString;

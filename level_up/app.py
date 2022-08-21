@@ -1,5 +1,6 @@
 import os
 import json
+from turtle import pos
 from flask import Flask, request, render_template, g, session, jsonify, redirect, url_for
 
 
@@ -27,21 +28,17 @@ def create_app(test_config=None):
         pass
 
     @app.route("/")
-    def hello():
-        return "Hello, World!"
-
-    @app.route("/index")
-    def index():
-        return "Index Page!"
+    def root():
+        redirect(url_for("auth.login"))
 
     @app.route("/profile", methods=["GET"])
     def profile():
         if request.method == "GET":
             connection = db.get_db()
             cursor = connection.cursor()
-            Exp = cursor.execute("SELECT email FROM user WHERE id = ?", session.get("id")).fetchall
+            exp = cursor.execute("SELECT exp FROM user WHERE id = ?", str(g.user["id"])).fetchone()
 
-        return render_template("profile.html", exp = Exp, tab='profile')    
+            return render_template("profile.html", exp = exp["exp"], tab='profile')    
     
     @app.route("/timer")
     def timer():
@@ -85,6 +82,11 @@ def create_app(test_config=None):
                 connection.commit()
                 print(f"Task id {taskId} has been deleted")
 
+            if postData["event"] == "update":
+                cursor.execute(f"UPDATE user SET exp = exp + {postData['exp']} WHERE {session.get('user_id')}")
+                connection.commit()
+                print(f"Experience has been updated")
+                
             if postData['event'] == "add":
                 taskName = postData['task-name']
                 taskTimeHours = postData['task-time-hours']

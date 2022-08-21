@@ -36,8 +36,12 @@ def create_app(test_config=None):
 
     @app.route("/profile")
     def profile():
-        return render_template("profile.html", message = "Username", alert = "alert-success")    
-    
+        return render_template("profile.html", message="Username", alert="alert-success")
+
+    @app.route("/timer")
+    def timer():
+        return render_template("/task/task_timer.html")
+
     # register the database commands
     import db
 
@@ -59,37 +63,67 @@ def create_app(test_config=None):
         if g.user == None:
             return "Please Login"
 
+        # Initialize Variables
+        taskName = None
+        taskId = None
+
         connection = db.get_db()
         cursor = connection.cursor()
 
-        if request.method == "POST":
+        if request.method == "POST" and not request.data == b"":
             postData = json.loads(request.data.decode('utf-8'))
-            taskName = postData['task-name']
-            taskTime = postData['task-time']
-            error = None
 
-            if not taskName:
-                error = "Task name is required."
-            elif not taskTime:
-                error = "Task time is required."
+            if postData["event"] == "delete":
+                taskId = postData['id']
+                cursor.execute(
+                    f"DELETE FROM tasks WHERE id='{taskId}';",
+                )
+                connection.commit()
+                print(f"Task id {taskId} has been deleted")
 
-            if error is None:
+            if postData['event'] == "add":
+                taskName = postData['task-name']
+                taskTimeHours = postData['task-time-hours']
+                taskTimeMinutes = postData['task-time-minutes']
+                taskTimeSeconds = postData['task-time-seconds']
                 try:
                     cursor.execute(
-                        "INSERT INTO tasks (user_id, task_name, task_time_seconds) VALUES (?, ?, ?)",
-                        (session.get("user_id"), taskName, taskTime),
+                        "INSERT INTO tasks (user_id, task_name, task_time_hours, task_time_minutes, task_time_seconds) VALUES (?, ?, ?, ?, ?)",
+                        (session.get("user_id"), taskName, taskTimeHours, taskTimeMinutes, taskTimeSeconds),
                     )
                     connection.commit()
-                    newTask = { 'task-name': taskName, 'task-time': taskTime, 'error': 0 }
+
+                    created_taskid = cursor.execute(
+                        "SELECT MAX(id) from tasks",).fetchone()[0]
+                    newTask = {
+                        'task-id': created_taskid,
+                        'task-name': taskName,
+                        'task-time-hours': taskTimeHours,
+                        'task-time-hours': taskTimeMinutes,
+                        'task-time-hours': taskTimeSeconds,
+                        'error': 0
+                    }
+                    
                     return jsonify(newTask)
+                    
                 except Exception as e:
-                    error = "Error"
                     print(e)
                     return jsonify({"error": 1})
 
-            print("error", error)
+            if postData["event"] == "display":
+                try:
+                    cursor.execute("SELECT * from tasks")
+                    r = [dict((cursor.description[i][0], value)
+                        for i, value in enumerate(row)) for row in cursor.fetchall()]
 
-        tasks = cursor.execute("SELECT * FROM tasks WHERE user_id = ?", (session.get("user_id"),)).fetchall()
+                    return {record["id"]:record for record in r}
+
+                except Exception as e:
+                                print(e)
+                                return jsonify({"error": 1})
+
+        tasks = cursor.execute(
+            "SELECT * FROM tasks WHERE user_id = ?", (session.get("user_id"),)).fetchall()
         return render_template("task/task.html", tasks=tasks)
 
     return app

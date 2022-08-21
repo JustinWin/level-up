@@ -55,11 +55,11 @@ def register():
                     (email, generate_password_hash(password), 0),
                 )
                 db.commit()
+                flash("Account successfully created.")
             except db.IntegrityError:
                 # The email was already taken, which caused the
                 # commit to fail. Show a validation error.
                 message = f"This email already exists."
-
             else:
                 # Success, go to the index page.
                 return redirect(url_for("auth.login"))
@@ -127,4 +127,5 @@ def reset_password():
 def logout():
     """Clear the current session, including the stored user id."""
     session.clear()
+    flash("Logout successful.")
     return redirect(url_for("auth.login"))

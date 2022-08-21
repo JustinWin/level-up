@@ -11,6 +11,18 @@
     </div>
 </div>
 {% endif %}
+{% with flash_messages = get_flashed_messages() %}
+    {% if flash_messages %}
+        {% for flash_message in flash_messages %}
+    <div class="alert alert-success d-flex align-items-center" role="alert">
+        <i class="material-icons mdc-text-field__icon" style="color:rgb(33, 133, 0)">check_circle</i>
+        <div class="px-3">
+            {{ flash_message }}
+        </div>
+    </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
 <div class="py-2">
     <label class="mdc-text-field mdc-text-field--filled  mdc-text-field--with-leading-icon">
         <i class="material-icons mdc-text-field__icon" style="color:rgb(0, 0, 0)">mail</i>

@@ -51,8 +51,8 @@ def register():
         if message is None:
             try:
                 db.execute(
-                    "INSERT INTO user (email, password) VALUES (?, ?)",
-                    (email, generate_password_hash(password)),
+                    "INSERT INTO user (email, password, exp) VALUES (?, ?, ?)",
+                    (email, generate_password_hash(password), 0),
                 )
                 db.commit()
             except db.IntegrityError:
@@ -62,7 +62,7 @@ def register():
 
             else:
                 # Success, go to the index page.
-                return redirect(url_for("index"))
+                return redirect(url_for("auth.login"))
 
     return render_template("auth/register.html", message=message)
 
@@ -71,6 +71,9 @@ def register():
 def login():
     """Log in a registered user by adding the user id to the session."""
     message = None
+    if g.user != None:
+        return redirect(url_for("task"))
+
     if request.method == "POST":
         email = request.form["email"]
         password = request.form["password"]
@@ -87,7 +90,7 @@ def login():
                 # store the user id in a new session and return to the index
                 session.clear()
                 session["user_id"] = user["id"]
-                return redirect(url_for("index"))
+                return redirect(url_for("task"))
 
     return render_template("auth/login.html", message=message)
 
@@ -125,4 +128,4 @@ def reset_password():
 def logout():
     """Clear the current session, including the stored user id."""
     session.clear()
-    return redirect(url_for("index"))
+    return redirect(url_for("auth.login"))

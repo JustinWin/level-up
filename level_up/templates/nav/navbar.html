@@ -1,6 +1,6 @@
 <!-- Image and text -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="line-height: 50px;">
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand" {% if tab != 'home' %}href="/task"{% endif %}>
         <img src="/static/assets/Level_Up_Logo_No_Text.png" width="50" height="50" class="d-inline-block align-top"
             alt="Level Up Logo" />
         <t>Level Up</t>
@@ -9,21 +9,21 @@
         <div class="mdc-tab-scroller">
             <div class="mdc-tab-scroller__scroll-area mdc-tab-scroller__scroll-area--scroll">
                 <div class="mdc-tab-scroller__scroll-content">
-                    <button class="mdc-tab mdc-tab--active" role="tab" aria-selected="true" tabindex="0" id="mdc-tab-4">
+                    <button {% if tab != 'home' %}onclick="location.href='/task'"{% endif %} class="mdc-tab {% if tab == 'home' %}mdc-tab--active{% endif %}" role="tab" aria-selected="true" tabindex="0" id="mdc-tab-4">
                         <span class="mdc-tab__content">
                             <span class="mdc-tab__icon material-icons" aria-hidden="true">house</span>
                             <span class="mdc-tab__text-label">Home</span>
                         </span>
-                        <span class="mdc-tab-indicator mdc-tab-indicator--active">
+                        <span class="mdc-tab-indicator {% if tab == 'home' %}mdc-tab-indicator--active{% endif %}">
                             <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
                         </span>
                         <span class="mdc-tab__ripple mdc-ripple-upgraded"></span>
                     </button>
-                    <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" id="mdc-tab-5">
+                    <button {% if tab != '/profile' %}onclick="location.href='/profile'"{% endif %} class="mdc-tab {% if tab == 'profile' %}mdc-tab--active{% endif %}" role="tab" aria-selected="false" tabindex="-1" id="mdc-tab-5">
                         <span class="mdc-tab__content">
                             <span class="mdc-tab__icon material-icons" aria-hidden="true">person</span>
                             <span class="mdc-tab__text-label">Profile</span>
-                        </span><span class="mdc-tab-indicator">
+                        </span><span class="mdc-tab-indicator {% if tab == 'profile' %}mdc-tab-indicator--active{% endif %}">
                             <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
                         </span>
                         <span class="mdc-tab__ripple mdc-ripple-upgraded"></span>
@@ -32,7 +32,7 @@
             </div>
         </div>
     </div>
-    <button class="demo-button mdc-button mdc-button--unelevated mdc-ripple-upgraded m-3">
+    <button onclick="location.href='/auth/logout'" class="demo-button mdc-button mdc-button--unelevated mdc-ripple-upgraded m-3">
         <span class="mdc-button__ripple"> </span>
         <i class="material-icons mdc-button__icon">logout</i>
         <span class="mdc-button__label">Logout</span>

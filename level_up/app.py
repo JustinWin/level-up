@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Flask, request, render_template, g, session, jsonify
+from flask import Flask, request, render_template, g, session, jsonify, redirect, url_for
 
 
 def create_app(test_config=None):
@@ -34,14 +34,18 @@ def create_app(test_config=None):
     def index():
         return "Index Page!"
 
-    @app.route("/profile")
+    @app.route("/profile", methods=["GET"])
     def profile():
-        return render_template("profile.html", message="Username", alert="alert-success")
+        if request.method == "GET":
+            connection = db.get_db()
+            cursor = connection.cursor()
+            Exp = cursor.execute("SELECT email FROM user WHERE id = ?", session.get("id")).fetchall
 
+        return render_template("profile.html", exp = Exp, tab='profile')    
+    
     @app.route("/timer")
     def timer():
         return render_template("/task/task_timer.html")
-
     # register the database commands
     import db
 
@@ -61,7 +65,7 @@ def create_app(test_config=None):
     @app.route("/task", methods=["GET", "POST"])
     def task():
         if g.user == None:
-            return "Please Login"
+            return redirect(url_for("auth.login"))
 
         # Initialize Variables
         taskName = None
@@ -124,6 +128,6 @@ def create_app(test_config=None):
 
         tasks = cursor.execute(
             "SELECT * FROM tasks WHERE user_id = ?", (session.get("user_id"),)).fetchall()
-        return render_template("task/task.html", tasks=tasks)
+        return render_template("task/task.html", tasks=tasks, tab='home')
 
     return app

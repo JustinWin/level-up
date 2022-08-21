@@ -34,9 +34,14 @@ def create_app(test_config=None):
     def index():
         return "Index Page!"
 
-    @app.route("/profile")
+    @app.route("/profile", methods=["GET"])
     def profile():
-        return render_template("profile.html", message = "Username", alert = "alert-success", tab='profile')    
+        if request.method == "GET":
+            connection = db.get_db()
+            cursor = connection.cursor()
+            Exp = cursor.execute("SELECT email FROM user WHERE id = ?", session.get("id")).fetchall
+
+        return render_template("profile.html", exp = Exp, tab='profile')    
     
     # register the database commands
     import db

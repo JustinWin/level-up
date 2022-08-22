@@ -1,6 +1,5 @@
 import os
 import json
-from turtle import pos
 from flask import Flask, request, render_template, g, session, jsonify, redirect, url_for
 
 
@@ -29,20 +28,18 @@ def create_app(test_config=None):
 
     @app.route("/")
     def root():
-        redirect(url_for("auth.login"))
+        return redirect(url_for("auth.login"))
 
     @app.route("/profile", methods=["GET"])
     def profile():
         if request.method == "GET":
             connection = db.get_db()
             cursor = connection.cursor()
-            exp = cursor.execute("SELECT exp FROM user WHERE id = ?", str(g.user["id"])).fetchone()
+            exp = cursor.execute(
+                "SELECT exp FROM user WHERE id = ?", str(g.user["id"])).fetchone()
 
-            return render_template("profile.html", exp = exp["exp"], tab='profile')    
-    
-    @app.route("/timer")
-    def timer():
-        return render_template("/task/task_timer.html")
+            return render_template("profile.html", exp=exp["exp"], tab='profile')
+
     # register the database commands
     import db
 
@@ -52,12 +49,6 @@ def create_app(test_config=None):
     import auth
 
     app.register_blueprint(auth.bp)
-
-    # make url_for('index') == url_for('blog.index')
-    # in another app, you might define a separate main index here with
-    # app.route, while giving the blog blueprint a url_prefix, but for
-    # the tutorial the blog will be the main index
-    app.add_url_rule("/", endpoint="")
 
     @app.route("/task", methods=["GET", "POST"])
     def task():
@@ -83,10 +74,11 @@ def create_app(test_config=None):
                 print(f"Task id {taskId} has been deleted")
 
             if postData["event"] == "update":
-                cursor.execute(f"UPDATE user SET exp = exp + {postData['exp']} WHERE {session.get('user_id')}")
+                cursor.execute(
+                    f"UPDATE user SET exp = exp + {postData['exp']} WHERE {session.get('user_id')}")
                 connection.commit()
                 print(f"Experience has been updated")
-                
+
             if postData['event'] == "add":
                 taskName = postData['task-name']
                 taskTimeHours = postData['task-time-hours']
@@ -95,7 +87,8 @@ def create_app(test_config=None):
                 try:
                     cursor.execute(
                         "INSERT INTO tasks (user_id, task_name, task_time_hours, task_time_minutes, task_time_seconds) VALUES (?, ?, ?, ?, ?)",
-                        (session.get("user_id"), taskName, taskTimeHours, taskTimeMinutes, taskTimeSeconds),
+                        (session.get("user_id"), taskName, taskTimeHours,
+                         taskTimeMinutes, taskTimeSeconds),
                     )
                     connection.commit()
 
@@ -109,9 +102,9 @@ def create_app(test_config=None):
                         'task-time-hours': taskTimeSeconds,
                         'error': 0
                     }
-                    
+
                     return jsonify(newTask)
-                    
+
                 except Exception as e:
                     print(e)
                     return jsonify({"error": 1})
@@ -120,16 +113,20 @@ def create_app(test_config=None):
                 try:
                     cursor.execute("SELECT * from tasks")
                     r = [dict((cursor.description[i][0], value)
-                        for i, value in enumerate(row)) for row in cursor.fetchall()]
+                              for i, value in enumerate(row)) for row in cursor.fetchall()]
 
-                    return {record["id"]:record for record in r}
+                    return {record["id"]: record for record in r}
 
                 except Exception as e:
-                                print(e)
-                                return jsonify({"error": 1})
+                    print(e)
+                    return jsonify({"error": 1})
 
         tasks = cursor.execute(
             "SELECT * FROM tasks WHERE user_id = ?", (session.get("user_id"),)).fetchall()
         return render_template("task/task.html", tasks=tasks, tab='home')
 
     return app
+
+
+# For deploymen
+app = create_app()

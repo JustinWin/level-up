@@ -78,27 +78,13 @@ a {
 }
 
 #task-list-container {
-    border: 3px solid #fff;
-    padding: 20px;
-}
-
-.float-container {
-    display: block;
-}
-
-.task-name-container,
-.task-time-container {
-    width: 40%;
-    float: left;
-    padding: 20px;
-    border: 2px solid red;
+    display: inline-grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
 }
 
 .play-button {
-    width: 20%;
-    float: left;
     padding: 20px;
-    border: 2px solid red;
 }
 
 
@@ -106,13 +92,17 @@ a {
     padding: 30px;
 }
 
-.modal-body{
+.modal-body {
     font-size: 50px;
     font-family: "Open Sans";
     background-color: #414141;
 }
 
-.profile_page_content{
+.modal-content {
+    background-color: none;
+}
+
+.profile_page_content { 
     font-family: "Open Sans";
     color: #4d4d4d;
     display: block;
@@ -128,6 +118,15 @@ a {
     margin-top: 50px;
     font-family: "Open Sans";
     display: block;
+}
+
+
+.modal-header {
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-top: none;
 }
 
 .expBar {

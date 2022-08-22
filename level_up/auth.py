@@ -2,7 +2,7 @@ import functools
 import re
 
 from flask import (Blueprint, g, redirect, render_template, request,
-                   session, url_for)
+                   session, url_for, flash)
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from db import get_db
@@ -55,15 +55,14 @@ def register():
                     (email, generate_password_hash(password), 0),
                 )
                 db.commit()
+                flash("Account successfully created.")
             except db.IntegrityError:
                 # The email was already taken, which caused the
                 # commit to fail. Show a validation error.
                 message = f"This email already exists."
-
             else:
                 # Success, go to the index page.
                 return redirect(url_for("auth.login"))
-
     return render_template("auth/register.html", message=message)
 
 
@@ -128,4 +127,5 @@ def reset_password():
 def logout():
     """Clear the current session, including the stored user id."""
     session.clear()
+    flash("Logout successful.")
     return redirect(url_for("auth.login"))

@@ -34,6 +34,9 @@ def create_app(test_config=None):
     @app.route("/profile", methods=["GET"])
     def profile():
         if request.method == "GET":
+            if g.user == None:
+                return redirect(url_for("auth.login"))
+
             connection = db.get_db()
             cursor = connection.cursor()
             exp = cursor.execute("SELECT exp FROM user WHERE id = ?", str(g.user["id"])).fetchone()

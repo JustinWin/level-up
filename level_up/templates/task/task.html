@@ -58,10 +58,12 @@
 <div id="snackbar-delete" class="mdc-snackbar mdc-snackbar--closed fade">
 	<div class="mdc-snackbar__surface">
 		<div class="mdc-snackbar__label" role="status" aria-live="polite">Task Deleted Sucessfully</div>
-		<div class="mdc-snackbar__actions"><button type="button" class="mdc-button mdc-snackbar__action">
+		<div class="mdc-snackbar__actions">
+			<button id="snackbar-undo" type="button" class="mdc-button mdc-snackbar__action">
 				<div class="mdc-button__ripple"></div>UNDO
-				<button id="snackbar-dismiss" class="mdc-icon-button mdc-snackbar__dismiss material-icons"
-					title="Dismiss">close</button>
+			</button>
+			<button id="snackbar-dismiss" class="mdc-icon-button mdc-snackbar__dismiss material-icons"
+				title="Dismiss">close</button>
 		</div>
 	</div>
 </div>
@@ -116,8 +118,6 @@
 			// Generic POST function for adding tasks
 			async function addTaskPost(url, data) {
 				r = await postRequest('/task', data).then(responseJson => {
-					console.log(responseJson);
-					console.log("HERE")
 
 					// Create card element
 					let card = document.createElement("div")
@@ -169,7 +169,6 @@
 					// Append card to task container
 					let taskListContainer = document.getElementById("task-list-container");
 					taskListContainer.append(card);
-					console.log(responseJson['task-time-hours'] + "hours")
 					play_pause_display(
 						responseJson['task-id'],
 						responseJson['task-time-hours'],
@@ -200,12 +199,36 @@
 					});
 			});
 
+
+
 			let snackbar_dismiss = document.getElementById("snackbar-dismiss")
 			snackbar_dismiss.addEventListener("click", function () {
 				let snackbar_delete = document.getElementById("snackbar-delete");
 				snackbar_delete.classList.remove("mdc-snackbar--open", "show")
 				snackbar_delete.classList.add('mdc-snackbar--close');
 			});
+
+			let snackbar_undo = document.getElementById("snackbar-undo")
+			snackbar_undo.addEventListener("click", (e) => {
+				recently_deleted_task = (postRequest('/task', { 'event': 'undo' }).then(responseJson => {
+					addTaskPost(
+						'/task',
+						{
+							'event': 'add',
+							'task-name': responseJson["task-name"],
+							'task-time-hours': responseJson["task-time-hours"],
+							'task-time-minutes': responseJson["task-time-minutes"],
+							'task-time-seconds': responseJson["task-time-seconds"]
+						}
+					);
+				}));
+				let snackbar_delete = document.getElementById("snackbar-delete");
+				snackbar_delete.classList.remove("mdc-snackbar--open", "show")
+				snackbar_delete.classList.add('mdc-snackbar--close');
+
+			});
+
+
 
 			// Adds delete functionality to cards
 			function add_delete_funtionality_to_all_cards() {
@@ -258,15 +281,12 @@
 				const displayOutput = document.getElementById(`remaining-time-${id}`)
 				const pauseBtn = document.getElementById(`play-pause-${id}`);
 				const setterBtns = document.querySelectorAll('button[data-setter]');
-				console.log(input_hours)
 				let intervalTimer;
 				let timeLeft;
 				let wholeTime = (parseInt(input_hours) * 3600) + (parseInt(input_minutes) * 60) + parseInt(input_seconds); // manage this to set the whole time in seconds
 				let isPaused = false;
 				let isStarted = false;
-				console.log(wholeTime + "1")
 				update(wholeTime, wholeTime); //refreshes progress bar
-				console.log(wholeTime + "2")
 				displayTimeLeft(wholeTime);
 
 				function changeWholeTime(seconds) {

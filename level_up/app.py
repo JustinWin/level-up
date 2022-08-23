@@ -74,15 +74,20 @@ def create_app(test_config=None):
                 global recently_deleted_task
                 recently_deleted_task = cursor.execute(
                     f"SELECT * FROM tasks WHERE id='{taskId}';",
-                )
+                ).fetchone()
                 cursor.execute(
                     f"DELETE FROM tasks WHERE id='{taskId}';",
                 )
                 connection.commit()
                 print(f"Task id {taskId} has been deleted")
 
-            elif postData["event"] == "undo":
-                pass
+            elif postData["event"] == "undo" and recently_deleted_task is not None:
+                return {
+                    'task-name': recently_deleted_task["task_name"],
+                    'task-time-hours': recently_deleted_task["task_time_hours"],
+                    'task-time-minutes': recently_deleted_task["task_time_minutes"],
+                    'task-time-seconds': recently_deleted_task["task_time_seconds"]
+                }
 
             elif postData["event"] == "update":
                 cursor.execute(

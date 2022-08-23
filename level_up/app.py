@@ -3,6 +3,10 @@ import json
 from flask import Flask, request, render_template, g, session, jsonify, redirect, url_for
 
 
+# Allows for undo functionality
+recently_deleted_task = None
+
+
 def create_app(test_config=None):
     """Create and configure an instance of the Flask application."""
     app = Flask(__name__, instance_relative_config=True)
@@ -67,19 +71,26 @@ def create_app(test_config=None):
 
             if postData["event"] == "delete":
                 taskId = postData['id']
+                global recently_deleted_task
+                recently_deleted_task = cursor.execute(
+                    f"SELECT * FROM tasks WHERE id='{taskId}';",
+                )
                 cursor.execute(
                     f"DELETE FROM tasks WHERE id='{taskId}';",
                 )
                 connection.commit()
                 print(f"Task id {taskId} has been deleted")
 
-            if postData["event"] == "update":
+            elif postData["event"] == "undo":
+                pass
+
+            elif postData["event"] == "update":
                 cursor.execute(
                     f"UPDATE user SET exp = exp + {postData['exp']} WHERE {session.get('user_id')}")
                 connection.commit()
                 print(f"Experience has been updated")
 
-            if postData['event'] == "add":
+            elif postData['event'] == "add":
                 taskName = postData['task-name']
                 taskTimeHours = postData['task-time-hours']
                 taskTimeMinutes = postData['task-time-minutes']
@@ -98,8 +109,8 @@ def create_app(test_config=None):
                         'task-id': created_taskid,
                         'task-name': taskName,
                         'task-time-hours': taskTimeHours,
-                        'task-time-hours': taskTimeMinutes,
-                        'task-time-hours': taskTimeSeconds,
+                        'task-time-minutes': taskTimeMinutes,
+                        'task-time-seconds': taskTimeSeconds,
                         'error': 0
                     }
 
@@ -109,7 +120,7 @@ def create_app(test_config=None):
                     print(e)
                     return jsonify({"error": 1})
 
-            if postData["event"] == "display":
+            elif postData["event"] == "display":
                 try:
                     cursor.execute("SELECT * from tasks")
                     r = [dict((cursor.description[i][0], value)
@@ -123,10 +134,12 @@ def create_app(test_config=None):
 
         tasks = cursor.execute(
             "SELECT * FROM tasks WHERE user_id = ?", (session.get("user_id"),)).fetchall()
+
+        db.close_db()
         return render_template("task/task.html", tasks=tasks, tab='home')
 
     return app
 
 
-# For deploymen
+# For deployment
 app = create_app()

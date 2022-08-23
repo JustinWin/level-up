@@ -55,6 +55,16 @@
 		</form>
 	</div>
 </div>
+<div id="snackbar-delete" class="mdc-snackbar mdc-snackbar--closed fade">
+	<div class="mdc-snackbar__surface">
+		<div class="mdc-snackbar__label" role="status" aria-live="polite">Task Deleted Sucessfully</div>
+		<div class="mdc-snackbar__actions"><button type="button" class="mdc-button mdc-snackbar__action">
+				<div class="mdc-button__ripple"></div>UNDO
+				<button id="snackbar-dismiss" class="mdc-icon-button mdc-snackbar__dismiss material-icons"
+					title="Dismiss">close</button>
+		</div>
+	</div>
+</div>
 <div>
 	<div class="w-50" id="task-list-container">
 		{% for task in tasks %}
@@ -82,6 +92,7 @@
 				<button class="play-pause play" id="play-pause-{{ task.id }}"></button>
 			</div>
 		</div>
+
 		{% endfor %}
 		{% endblock %}
 
@@ -104,19 +115,13 @@
 			}
 			// Generic POST function for adding tasks
 			async function addTaskPost(url, data) {
-				const response = await fetch(url, {
-					method: 'POST', // or 'PUT'
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify(data)
-				});
-				let responseJson = await response.json(); // parses JSON response into native JavaScript objects
-				if (responseJson.error == 0) {
+				r = await postRequest('/task', data).then(responseJson => {
+					console.log(responseJson);
+					console.log("HERE")
 
 					// Create card element
 					let card = document.createElement("div")
-					card.id = "task-id-" + responseJson["id"]
+					card.id = "task-id-" + responseJson["task-id"]
 					card.classList.add("m-3", "w-100", "card", "card-body", "text-bg-dark", "justify-content-center", "d-inline-block");
 					card.style.height = "400px";
 
@@ -164,12 +169,22 @@
 					// Append card to task container
 					let taskListContainer = document.getElementById("task-list-container");
 					taskListContainer.append(card);
-					console.log($(".card").show().children().show());
-					play_pause_display(responseJson['task-id']);
-				}
+					console.log(responseJson['task-time-hours'] + "hours")
+					play_pause_display(
+						responseJson['task-id'],
+						responseJson['task-time-hours'],
+						responseJson['task-time-minutes'],
+						responseJson['task-time-seconds']
+					);
+
+				})
+				add_delete_funtionality_to_all_cards();
+
 			}
 
 			document.getElementById("add-task-submit-button").addEventListener("click", function () {
+				// Prevents refresh
+				event.preventDefault();
 				taskName = document.getElementById("task-name").value;
 				taskTimeHours = document.getElementById("task-time-hours").value;
 				taskTimeMinutes = document.getElementById("task-time-minutes").value;
@@ -185,6 +200,13 @@
 					});
 			});
 
+			let snackbar_dismiss = document.getElementById("snackbar-dismiss")
+			snackbar_dismiss.addEventListener("click", function () {
+				let snackbar_delete = document.getElementById("snackbar-delete");
+				snackbar_delete.classList.remove("mdc-snackbar--open", "show")
+				snackbar_delete.classList.add('mdc-snackbar--close');
+			});
+
 			// Adds delete functionality to cards
 			function add_delete_funtionality_to_all_cards() {
 				$('.close').click(function () {
@@ -193,6 +215,10 @@
 					var task_id = ($target[0].id.replace('task-id-', ''))
 					postRequest('/task', { 'event': 'delete', 'id': task_id });
 
+					// Display undo button
+					let snackbar_delete = document.getElementById("snackbar-delete");
+					snackbar_delete.classList.remove("mdc-snackbar--closed");
+					snackbar_delete.classList.add("mdc-snackbar--open", "show")
 				})
 			}
 
@@ -235,12 +261,12 @@
 				console.log(input_hours)
 				let intervalTimer;
 				let timeLeft;
-				let wholeTime = input_hours * 3600 + input_minutes * 60 + input_seconds; // manage this to set the whole time in seconds
+				let wholeTime = (parseInt(input_hours) * 3600) + (parseInt(input_minutes) * 60) + parseInt(input_seconds); // manage this to set the whole time in seconds
 				let isPaused = false;
 				let isStarted = false;
-
-
+				console.log(wholeTime + "1")
 				update(wholeTime, wholeTime); //refreshes progress bar
+				console.log(wholeTime + "2")
 				displayTimeLeft(wholeTime);
 
 				function changeWholeTime(seconds) {
@@ -281,15 +307,15 @@
 
 							close_modal_button = $("#close-modal")[0];
 							close_modal_button.addEventListener('click', close_modal);
-							
+
 							let content_container = $(".content");
 							let modal_backdrop = document.createElement("div");
 							modal_backdrop.classList.add("modal-backdrop", "fade", "show");
-						
+
 							content_container.append(modal_backdrop);
 
 							postRequest('/task', { 'event': 'update', 'exp': wholeTime });
-							
+
 							return;
 						}
 						displayTimeLeft(timeLeft);

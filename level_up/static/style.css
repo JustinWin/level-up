@@ -59,6 +59,10 @@ a {
     color: rgb(255 255 255 / 60%);
 }
 
+.mdc-snackbar__action:not(:disabled) {
+    color: #40b5e8;
+}
+
 .right-content {
     float: right;
 }
@@ -98,11 +102,15 @@ a {
     background-color: #414141;
 }
 
-.modal-content {
-    background-color: none;
+#task-complete-modal {
+    border: none;
 }
 
-.profile_page_content { 
+.carousel-item {
+    height: 500px;
+}
+
+.profile_page_content {
     font-family: "Open Sans";
     color: #4d4d4d;
     display: block;
@@ -111,15 +119,6 @@ a {
     margin-right: 600px;
     margin-top: 50px;
 }
-
-.profile_page_headers {
-    margin-left: 600px;
-    margin-right: 600px;
-    margin-top: 50px;
-    font-family: "Open Sans";
-    display: block;
-}
-
 
 .modal-header {
     border-bottom: none;
@@ -142,7 +141,8 @@ a {
     background-color: rgb(111, 231, 255);
     text-align: center;
     line-height: 30px;
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+    font-size: 25px;
 }
 
 .nav_bar {

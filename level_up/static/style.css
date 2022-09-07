@@ -24,6 +24,10 @@ a {
     color: #40b5e8
 }
 
+p {
+    margin-top: revert;
+}
+
 .content {
     font-family: "Open Sans";
     color: #ffffff;
@@ -61,6 +65,11 @@ a {
 
 .mdc-snackbar__action:not(:disabled) {
     color: #40b5e8;
+}
+
+.mdc-linear-progress {
+    background-color: #2f4f4f ;
+    border-radius: 5px;
 }
 
 .right-content {

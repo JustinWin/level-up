@@ -30,7 +30,7 @@ async function add_task_post(url, data) {
             <div class="d-flex justify-content-center align-items-center">
                 <p id="elasped-time-${responseJson["task-id"]}" class="p-1">00:00:00</p>
                 <div role="progressbar" class="mdc-linear-progress text-start mdc-linear-progress--animation-ready">
-                    <div id="progressbar-${responseJson["task-id"]}"class="mdc-linear-progress__bar mdc-linear-progress__primary-bar" style="transform: scaleX(0.5)">
+                    <div id="progressbar-${responseJson["task-id"]}"class="mdc-linear-progress__bar mdc-linear-progress__primary-bar" style="transform: scaleX(0.0)">
                         <span class="mdc-linear-progress__bar-inner"></span>
                     </div>
                     <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
@@ -103,10 +103,13 @@ function add_delete_funtionality_to_all_cards() {
 // }
 
 function initialize_timer(id, total_time) {
-
+    const progress_bar = document.getElementById(`progressbar-${id}`);
     const pause_btn = document.getElementById(`play-pause-${id}`);
     const elasped_time_div = document.getElementById(`elasped-time-${id}`);
     let elasped_seconds_interval = 0;
+
+    let progress_increment = 1 / total_time;
+    let current_progress = 0;
 
     interval_timer = setInterval(function () {
         elasped_seconds_interval++;
@@ -115,6 +118,10 @@ function initialize_timer(id, total_time) {
         let [elasped_hours, elasped_minutes, elasped_seconds] = convert_seconds_to_HMS(elasped_seconds_interval);
         let elaspedTime = `${elasped_hours < 10 ? '0' : ''}${elasped_hours}:${elasped_minutes < 10 ? '0' : ''}${elasped_minutes}:${elasped_seconds < 10 ? '0' : ''}${elasped_seconds}`;
         elasped_time_div.textContent = elaspedTime;
+
+        // Update progress bar
+        current_progress += progress_increment
+        progress_bar.style.transform = `scaleX(${current_progress})`
 
         // When timer completed
         if (elasped_seconds_interval >= total_time) {
@@ -144,7 +151,6 @@ function initialize_timer(id, total_time) {
 
 function timer_controls(id, total_time) {
 
-    const progressBar = document.getElementById(`progressbar-${id}`);
     const pause_btn = document.getElementById(`play-pause-${id}`);
 
     let is_paused = false;

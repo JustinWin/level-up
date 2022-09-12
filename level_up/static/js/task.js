@@ -1,5 +1,5 @@
 // POST Function for deleting tasks
-async function postRequest(url, data) {
+async function post_request(url, data) {
     const response = await fetch(url, {
         method: 'POST', // or 'PUT'
         headers: {
@@ -11,9 +11,10 @@ async function postRequest(url, data) {
 
     return responseJson
 }
+
 // Generic POST function for adding tasks
-async function add_task_post(url, data) {
-    r = await postRequest('/task', data).then(responseJson => {
+async function add_task_post(data) {
+    r = await post_request("/task", data).then(responseJson => {
 
         // Convert total seconds to readable format
         let [hours, minutes, seconds] = convert_seconds_to_HMS(responseJson["total-seconds"]);
@@ -46,11 +47,12 @@ async function add_task_post(url, data) {
             </div>
         `
         // Append card to task container
-        let taskListContainer = document.getElementById("task-list-container");
-        taskListContainer.append(card);
+        let task_list_container = document.getElementById("task-list-container");
+        task_list_container.append(card);
+
+        // Add pause functionality
         const pause_btn = document.getElementById(`play-pause-${responseJson["task-id"]}`);
         pause_btn.addEventListener('click', function () { timer_controls(responseJson['task-id'], responseJson['total-seconds']) });
-
 
     })
     add_delete_funtionality_to_all_cards();
@@ -70,14 +72,13 @@ function convert_seconds_to_HMS(input_seconds) {
 }
 
 
-
 // Adds delete functionality to cards
 function add_delete_funtionality_to_all_cards() {
     $('.close').click(function () {
-        var $target = $(this).parents(".card");
+        let $target = $(this).parents(".card");
         $target.hide('slow', function () { $target.remove(); });
-        var task_id = ($target[0].id.replace('task-id-', ''))
-        postRequest('/task', { 'event': 'delete', 'id': task_id });
+        let task_id = ($target[0].id.replace('task-id-', ''))
+        post_request('/task', { 'event': 'delete', 'id': task_id });
 
         // Display undo button
         let snackbar_delete = document.getElementById("snackbar-delete");
@@ -86,110 +87,107 @@ function add_delete_funtionality_to_all_cards() {
     })
 }
 
-// // On page refresh display times
-// function display_time_on_refresh() {
-//     all_tasks = postRequest('/task', { 'event': 'display' }).then(data => {
-//         all_tasks_ids = Object.keys(data);
-//         for (let i = 0; i < all_tasks_ids.length; i++) {
-//             task = (data[all_tasks_ids[i]]);
-//             initialize_timer(
-//                 task["id"],
-//                 task["total_seconds"]
-//             );
-//         }
-//     })
+// On page refresh display times
+function display_time_on_refresh() {
+    all_tasks = post_request('/task', { 'event': 'display' }).then(data => {
+        console.log(data);
+        // TODO make it so you cant start multiple timers at once.
+        // TODO display total time on refresh
+        // TODO make progress bar work on refresh
+        for (let [id, task] of Object.entries(data)) {
 
-
-// }
-
-function initialize_timer(id, total_time) {
-    const progress_bar = document.getElementById(`progressbar-${id}`);
-    const pause_btn = document.getElementById(`play-pause-${id}`);
-    const elasped_time_div = document.getElementById(`elasped-time-${id}`);
-    let elasped_seconds_interval = 0;
-
-    let progress_increment = 1 / total_time;
-    let current_progress = 0;
-
-    interval_timer = setInterval(function () {
-        elasped_seconds_interval++;
-
-        // Update elasped time
-        let [elasped_hours, elasped_minutes, elasped_seconds] = convert_seconds_to_HMS(elasped_seconds_interval);
-        let elaspedTime = `${elasped_hours < 10 ? '0' : ''}${elasped_hours}:${elasped_minutes < 10 ? '0' : ''}${elasped_minutes}:${elasped_seconds < 10 ? '0' : ''}${elasped_seconds}`;
-        elasped_time_div.textContent = elaspedTime;
-
-        // Update progress bar
-        current_progress += progress_increment
-        progress_bar.style.transform = `scaleX(${current_progress})`
-
-        // When timer completed
-        if (elasped_seconds_interval >= total_time) {
-            console.log(interval_timer)
-
-            clearInterval(interval_timer);
-
-            console.log(interval_timer)
-            is_ticking = false;
-
-            // Change pause button to play button
-            pause_btn.classList.remove('pause');
-            pause_btn.classList.add('play');
-
-            // Display task completed modal
-            display_task_completed(total_time);
-
-            // Update user's experience
-            postRequest('/task', { 'event': 'update', 'exp': total_time });
-            ;
+            // Add play pause functionality
+            let pause_btn = document.getElementById(`play-pause-${id}`);
+            pause_btn.addEventListener('click', function () { timer_controls(id, task['total-seconds']) });
         }
-    }, 1000);
-
-    return interval_timer;
+    })
 }
 
+// When timer is paused, save elasped seconds to database
+function save_elasped_time(id, current_elasped_seconds) {
+    post_request('/task', { 'event': 'save_elasped_time', 'id': id, 'elasped-seconds': current_elasped_seconds });
+}
 
+// Controls the play and pause of the timer
 function timer_controls(id, total_time) {
+    console.log(id);
+    let pause_btn = document.getElementById(`play-pause-${id}`);
+    function initialize_timer() {
 
-    const pause_btn = document.getElementById(`play-pause-${id}`);
+        let progress_increment = 1 / total_time;
 
-    let is_paused = false;
+        interval_timer = setInterval(function () {
+
+            let progress_bar = document.getElementById(`progressbar-${id}`);
+            let elasped_time_div = document.getElementById(`elasped-time-${id}`);
+            // Update elasped time
+            current_elasped_seconds++;
+            let [elasped_hours, elasped_minutes, elasped_seconds] = convert_seconds_to_HMS(current_elasped_seconds);
+            let elaspedTime = `${elasped_hours < 10 ? '0' : ''}${elasped_hours}:${elasped_minutes < 10 ? '0' : ''}${elasped_minutes}:${elasped_seconds < 10 ? '0' : ''}${elasped_seconds}`;
+            console.log(elaspedTime);
+            elasped_time_div.textContent = elaspedTime;
+
+            // Update progress bar
+            current_progress += progress_increment
+            progress_bar.style.transform = `scaleX(${current_progress})`
+
+            // When timer completed
+            if (current_elasped_seconds >= total_time) {
+                clearInterval(interval_timer);
+
+                // Reset progress
+                current_elasped_seconds = 0;
+                current_progress = 0;
+
+                // Change pause button to play button
+                pause_btn.classList.remove('pause');
+                pause_btn.classList.add('play');
+
+                // Display task completed modal
+                display_task_completed(total_time);
+
+                // Update user's experience
+                post_request('/task', { 'event': 'update', 'exp': total_time });
+            }
+        }, 1000);
+
+        return interval_timer;
+    }
 
     // Timer is unpaused
     if (pause_btn.classList.contains("play")) {
         pause_btn.classList.remove('play');
         pause_btn.classList.add('pause');
         current_interval = initialize_timer(id, total_time);
-        is_paused = is_paused ? false : true
 
     } else {
         // Timer is paused
         pause_btn.classList.remove('pause');
         pause_btn.classList.add('play');
-        console.log(interval_timer);
+        save_elasped_time(id, current_elasped_seconds);
         clearInterval(current_interval);
-        is_paused = is_paused ? false : true;
     }
 }
 
-
-
 // Displays a modal to the user showing their experience gained for task completion
 function display_task_completed(total_time) {
+    // Initialize modal
     let task_complete_modal = new bootstrap.Modal(document.getElementById('task-complete-modal'), {
         keyboard: false
     });
 
+    // Show modal
     document.getElementById("exp-gain").innerHTML = "+ " + total_time + " XP";
     task_complete_modal.show();
-    function close_modal() {
+
+    // Activate close modal button
+    close_modal_button = $("#close-modal")[0];
+    close_modal_button.addEventListener('click', function () {
         let close_modal_backdrop = $(".modal-backdrop");
         close_modal_backdrop.remove();
-    }
+    });
 
-    close_modal_button = $("#close-modal")[0];
-    close_modal_button.addEventListener('click', close_modal);
-
+    // Dim background
     let content_container = $(".content");
     let modal_backdrop = document.createElement("div");
     modal_backdrop.classList.add("modal-backdrop", "fade", "show");
@@ -197,23 +195,24 @@ function display_task_completed(total_time) {
     content_container.append(modal_backdrop);
 }
 
+// Activates submit task button
 document.getElementById("add-task-submit-button").addEventListener("click", function () {
     // Prevents refresh
     event.preventDefault();
-    taskName = document.getElementById("task-name").value;
-    taskTimeHours = document.getElementById("task-time-hours").value;
-    taskTimeMinutes = document.getElementById("task-time-minutes").value;
-    taskTimeSeconds = document.getElementById("task-time-seconds").value;
+    task_name = document.getElementById("task-name").value;
+    task_time_hours = document.getElementById("task-time-hours").value;
+    task_time_minutes = document.getElementById("task-time-minutes").value;
+    task_time_seconds = document.getElementById("task-time-seconds").value;
     add_task_post(
-        '/task',
         {
             'event': 'add',
-            'task-name': taskName,
-            'total-seconds': convert_HMS_to_seconds(taskTimeHours, taskTimeMinutes, taskTimeSeconds)
+            'task-name': task_name,
+            'total-seconds': convert_HMS_to_seconds(task_time_hours, task_time_minutes, task_time_seconds)
         });
 });
 
 function initialize_snackbar() {
+    // Activate dismiss on snackbar
     let snackbar_dismiss = document.getElementById("snackbar-dismiss")
     snackbar_dismiss.addEventListener("click", function () {
         let snackbar_delete = document.getElementById("snackbar-delete");
@@ -221,11 +220,11 @@ function initialize_snackbar() {
         snackbar_delete.classList.add('mdc-snackbar--close');
     });
 
+    // Activate undo on snackbar
     let snackbar_undo = document.getElementById("snackbar-undo")
     snackbar_undo.addEventListener("click", (e) => {
-        recently_deleted_task = (postRequest('/task', { 'event': 'undo' }).then(responseJson => {
+        recently_deleted_task = (post_request('/task', { 'event': 'undo' }).then(responseJson => {
             add_task_post(
-                '/task',
                 {
                     'event': 'add',
                     'task-name': responseJson["task-name"],
@@ -236,13 +235,14 @@ function initialize_snackbar() {
         let snackbar_delete = document.getElementById("snackbar-delete");
         snackbar_delete.classList.remove("mdc-snackbar--open", "show")
         snackbar_delete.classList.add('mdc-snackbar--close');
-
     });
 }
 
 // TODO make it so only one interval can go at a time (other ones grayed out)
 let current_interval;
+let current_elasped_seconds = 0;
+let current_progress = 0;
 
 add_delete_funtionality_to_all_cards();
 initialize_snackbar();
-// display_time_on_refresh();
+display_time_on_refresh();

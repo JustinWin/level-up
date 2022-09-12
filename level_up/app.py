@@ -118,6 +118,20 @@ def create_app(test_config=None):
                     print(e)
                     return jsonify({"error": 1})
 
+            elif postData['event'] == "save_elasped_time":
+                task_id = postData['id']
+                elasped_seconds = postData['elasped-seconds']
+                try:
+                    cursor.execute(
+                        f"UPDATE tasks SET elasped_seconds = {elasped_seconds} WHERE id = {task_id}"
+                    )
+                    connection.commit()
+                    print(
+                        f"Updated task {task_id}'s elasped seconds to {elasped_seconds}")
+                except Exception as e:
+                    print(e)
+                    return jsonify({"error": 1})
+
             elif postData["event"] == "display":
                 try:
                     cursor.execute("SELECT * from tasks")

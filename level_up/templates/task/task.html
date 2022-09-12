@@ -79,17 +79,16 @@
 			<a class="close float-end" href="#"><i class="material-icons mdc-button__icon">delete</i></a>
 			<h5 class="card-header text-center">{{ task.task_name }}</h5>
 			<div class="d-flex justify-content-center align-items-center">
-				<p class="p-1">00:00:00</p>
-				<div role="progressbar" class="mdc-linear-progress text-start">
-					<div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar"
-						style="transform: scaleX(0.5)">
+				<p id="elasped-time-{{ task.id }}" class="p-1">00:00:00</p>
+				<div id="progress-bar-{{ task.id }}" role="progressbar" class="mdc-linear-progress text-start">
+					<div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
 						<span class="mdc-linear-progress__bar-inner"></span>
 					</div>
 					<div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
 						<span class="mdc-linear-progress__bar-inner"></span>
 					</div>
 				</div>
-				<p class="p-1">00:00:00</p>
+				<p id="total-time-{{ task.id }}" class="p-1">00:00:00</p>
 			</div>
 
 			<div class="controlls">

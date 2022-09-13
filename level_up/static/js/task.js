@@ -17,8 +17,7 @@ async function add_task_post(data) {
     r = await post_request("/task", data).then(responseJson => {
 
         // Convert total seconds to readable format
-        let [hours, minutes, seconds] = convert_seconds_to_HMS(responseJson["total-seconds"]);
-        let total_seconds = `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        let total_seconds = convert_seconds_to_HMS(responseJson["total-seconds"]);
 
         // Create card element
         let card = document.createElement("div")
@@ -31,7 +30,7 @@ async function add_task_post(data) {
             <div class="d-flex justify-content-center align-items-center">
                 <p id="elasped-time-${responseJson["task-id"]}" class="p-1">00:00:00</p>
                 <div role="progressbar" class="mdc-linear-progress text-start mdc-linear-progress--animation-ready">
-                    <div id="progressbar-${responseJson["task-id"]}"class="mdc-linear-progress__bar mdc-linear-progress__primary-bar" style="transform: scaleX(0.0)">
+                    <div id="progress-bar-${responseJson["task-id"]}"class="mdc-linear-progress__bar mdc-linear-progress__primary-bar" style="transform: scaleX(0.0)">
                         <span class="mdc-linear-progress__bar-inner"></span>
                     </div>
                     <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
@@ -42,7 +41,6 @@ async function add_task_post(data) {
             </div>
 
             <div class="controlls">
-                <div id="remaining-time-${responseJson["task-id"]}" class="display-remain-time"></div>
                 <button class="play-pause play" id="play-pause-${responseJson["task-id"]}"></button>
             </div>
         `
@@ -67,8 +65,9 @@ function convert_seconds_to_HMS(input_seconds) {
     let hours = Math.floor(input_seconds / 3600);
     let minutes = Math.floor((input_seconds - (hours * 3600)) / 60);
     let seconds = input_seconds % 60;
+    let total_seconds = `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
-    return [hours, minutes, seconds]
+    return total_seconds
 }
 
 
@@ -90,15 +89,24 @@ function add_delete_funtionality_to_all_cards() {
 // On page refresh display times
 function display_time_on_refresh() {
     all_tasks = post_request('/task', { 'event': 'display' }).then(data => {
-        console.log(data);
         // TODO make it so you cant start multiple timers at once.
-        // TODO display total time on refresh
-        // TODO make progress bar work on refresh
         for (let [id, task] of Object.entries(data)) {
 
             // Add play pause functionality
             let pause_btn = document.getElementById(`play-pause-${id}`);
-            pause_btn.addEventListener('click', function () { timer_controls(id, task['total-seconds']) });
+            pause_btn.addEventListener('click', function () { timer_controls(id, task['total_seconds']) });
+
+            // Update total time
+            let total_time_label = document.getElementById(`total-time-${id}`);
+            total_time_label.textContent = convert_seconds_to_HMS(task['total_seconds'])
+
+            // Update elasped time
+            let elasped_time_label = document.getElementById(`elasped-time-${id}`);
+            elasped_time_label.textContent = convert_seconds_to_HMS(task['elasped_seconds'])
+
+            // Update progress bar
+            let progress_bar = document.getElementById(`progress-bar-${id}`);
+            progress_bar.style.transform = `scaleX(${1 / task['total_seconds'] * task['elasped_seconds']})`
         }
     })
 }
@@ -110,7 +118,6 @@ function save_elasped_time(id, current_elasped_seconds) {
 
 // Controls the play and pause of the timer
 function timer_controls(id, total_time) {
-    console.log(id);
     let pause_btn = document.getElementById(`play-pause-${id}`);
     function initialize_timer() {
 
@@ -118,13 +125,12 @@ function timer_controls(id, total_time) {
 
         interval_timer = setInterval(function () {
 
-            let progress_bar = document.getElementById(`progressbar-${id}`);
+            let progress_bar = document.getElementById(`progress-bar-${id}`);
             let elasped_time_div = document.getElementById(`elasped-time-${id}`);
+
             // Update elasped time
             current_elasped_seconds++;
-            let [elasped_hours, elasped_minutes, elasped_seconds] = convert_seconds_to_HMS(current_elasped_seconds);
-            let elaspedTime = `${elasped_hours < 10 ? '0' : ''}${elasped_hours}:${elasped_minutes < 10 ? '0' : ''}${elasped_minutes}:${elasped_seconds < 10 ? '0' : ''}${elasped_seconds}`;
-            console.log(elaspedTime);
+            let elaspedTime = convert_seconds_to_HMS(current_elasped_seconds);
             elasped_time_div.textContent = elaspedTime;
 
             // Update progress bar
@@ -133,7 +139,9 @@ function timer_controls(id, total_time) {
 
             // When timer completed
             if (current_elasped_seconds >= total_time) {
+
                 clearInterval(interval_timer);
+                is_ticking = false
 
                 // Reset progress
                 current_elasped_seconds = 0;
@@ -155,17 +163,20 @@ function timer_controls(id, total_time) {
     }
 
     // Timer is unpaused
-    if (pause_btn.classList.contains("play")) {
+    if (pause_btn.classList.contains("play") && !is_ticking) {
+        console.log(is_ticking);
         pause_btn.classList.remove('play');
         pause_btn.classList.add('pause');
         current_interval = initialize_timer(id, total_time);
-
-    } else {
-        // Timer is paused
+        is_ticking = true
+    }
+    // Timer is paused
+    else if (pause_btn.classList.contains("pause")) {
         pause_btn.classList.remove('pause');
         pause_btn.classList.add('play');
         save_elasped_time(id, current_elasped_seconds);
         clearInterval(current_interval);
+        is_ticking = false
     }
 }
 
@@ -239,9 +250,11 @@ function initialize_snackbar() {
 }
 
 // TODO make it so only one interval can go at a time (other ones grayed out)
+// TODO Make it so when you refresh, paused timer start at the the elasped start time.
 let current_interval;
 let current_elasped_seconds = 0;
 let current_progress = 0;
+let is_ticking = false;
 
 add_delete_funtionality_to_all_cards();
 initialize_snackbar();

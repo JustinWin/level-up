@@ -80,8 +80,9 @@
 			<h5 class="card-header text-center">{{ task.task_name }}</h5>
 			<div class="d-flex justify-content-center align-items-center">
 				<p id="elasped-time-{{ task.id }}" class="p-1">00:00:00</p>
-				<div id="progress-bar-{{ task.id }}" role="progressbar" class="mdc-linear-progress text-start">
-					<div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+				<div role="progressbar" class="mdc-linear-progress text-start">
+					<div id="progress-bar-{{ task.id }}"
+						class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
 						<span class="mdc-linear-progress__bar-inner"></span>
 					</div>
 					<div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
@@ -91,8 +92,7 @@
 				<p id="total-time-{{ task.id }}" class="p-1">00:00:00</p>
 			</div>
 
-			<div class="controlls">
-				<div id="remaining-time-{{ task.id }}" class="display-remain-time"></div>
+			<div class="controls">
 				<button class="play-pause play" id="play-pause-{{ task.id }}"></button>
 			</div>
 		</div>

@@ -1,12 +1,6 @@
-.controlls {
+.controls {
     position: relative;
     top: -30px;
-}
-
-.display-remain-time {
-    font-weight: 100;
-    font-size: 55px;
-    color: #40b5e8;
 }
 
 .play-pause {
@@ -46,27 +40,4 @@
 
 .play-pause:hover {
     opacity: 0.8;
-}
-
-.e-c-base {
-    fill: none;
-    stroke: #B6B6B6;
-    stroke-width: 4px
-}
-
-.e-c-progress {
-    fill: none;
-    stroke: #40b5e8;
-    stroke-width: 4px;
-    transition: stroke-dashoffset 0.7s;
-}
-
-.e-c-pointer {
-    fill: #FFF;
-    stroke: #40b5e8;
-    stroke-width: 2px;
-}
-
-.e-pointer {
-    transition: transform 0.7s;
 }

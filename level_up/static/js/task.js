@@ -40,7 +40,7 @@ async function add_task_post(data) {
                 <p id="total-time-${responseJson["task-id"]}" class="p-1">${total_seconds}</p>
             </div>
 
-            <div class="controlls">
+            <div class="controls">
                 <button class="play-pause play" id="play-pause-${responseJson["task-id"]}"></button>
             </div>
         `
@@ -116,8 +116,16 @@ function save_elasped_time(id, current_elasped_seconds) {
     post_request('/task', { 'event': 'save_elasped_time', 'id': id, 'elasped-seconds': current_elasped_seconds });
 }
 
+// When timer is unpaused, get elasped time associated task and update current progress
+function get_elasped_time(id) {
+    elasped_seconds = (post_request('/task', { 'event': 'get_elasped_time', 'id': id })).then(responseJson => {
+        current_elasped_seconds = responseJson["elasped-time-seconds"]
+        current_progress = (1 / responseJson["total-time"]) * current_elasped_seconds
+    });
+}
+
 // Controls the play and pause of the timer
-function timer_controls(id, total_time) {
+async function timer_controls(id, total_time) {
     let pause_btn = document.getElementById(`play-pause-${id}`);
     function initialize_timer() {
 
@@ -164,9 +172,9 @@ function timer_controls(id, total_time) {
 
     // Timer is unpaused
     if (pause_btn.classList.contains("play") && !is_ticking) {
-        console.log(is_ticking);
         pause_btn.classList.remove('play');
         pause_btn.classList.add('pause');
+        current_elasped_seconds = get_elasped_time(id)
         current_interval = initialize_timer(id, total_time);
         is_ticking = true
     }
@@ -250,7 +258,8 @@ function initialize_snackbar() {
 }
 
 // TODO make it so only one interval can go at a time (other ones grayed out)
-// TODO Make it so when you refresh, paused timer start at the the elasped start time.
+// TODO make it so when timer finshes revert current progress and time to zero
+// TODO Fix console errors
 let current_interval;
 let current_elasped_seconds = 0;
 let current_progress = 0;

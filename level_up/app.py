@@ -98,8 +98,8 @@ def create_app(test_config=None):
                 totalSeconds = postData['total-seconds']
                 try:
                     cursor.execute(
-                        "INSERT INTO tasks (user_id, task_name, total_seconds, elasped_seconds) VALUES (?, ?, ?, ?)",
-                        (session.get("user_id"), taskName, totalSeconds, 0),
+                        "INSERT INTO tasks (user_id, task_name, total_seconds) VALUES (?, ?, ?)",
+                        (session.get("user_id"), taskName, totalSeconds),
                     )
                     connection.commit()
 
@@ -128,6 +128,23 @@ def create_app(test_config=None):
                     connection.commit()
                     print(
                         f"Updated task {task_id}'s elasped seconds to {elasped_seconds}")
+                except Exception as e:
+                    print(e)
+                    return jsonify({"error": 1})
+
+            elif postData['event'] == "get_elasped_time":
+                task_id = postData['id']
+                try:
+                    res = cursor.execute(
+                        f"SELECT elasped_seconds, total_seconds from tasks WHERE id = {task_id}"
+                    ).fetchone()
+
+                    print(
+                        f"Fetched task {task_id}'s elasped seconds of {res['elasped_seconds']} and total time {res['total_seconds']}"
+                        )
+
+                    return jsonify({"elasped-time-seconds": res["elasped_seconds"], "total-time": res["total_seconds"]})
+
                 except Exception as e:
                     print(e)
                     return jsonify({"error": 1})

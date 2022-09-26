@@ -13,6 +13,6 @@ CREATE TABLE tasks (
   user_id TEXT NOT NULL,
   task_name TEXT NOT NULL,
   total_seconds INTEGER NOT NULL,
-  elasped_seconds INTEGER NOT NULL,
+  elasped_seconds INTEGER DEFAULT 0 NOT NULL,
   FOREIGN KEY(user_id) REFERENCES user(id)
 );

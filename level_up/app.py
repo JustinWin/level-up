@@ -84,9 +84,7 @@ def create_app(test_config=None):
             elif postData["event"] == "undo" and recently_deleted_task is not None:
                 return {
                     'task-name': recently_deleted_task["task_name"],
-                    'task-time-hours': recently_deleted_task["task_time_hours"],
-                    'task-time-minutes': recently_deleted_task["task_time_minutes"],
-                    'task-time-seconds': recently_deleted_task["task_time_seconds"]
+                    'total-seconds': recently_deleted_task["total_seconds"]
                 }
 
             elif postData["event"] == "update":
@@ -97,14 +95,11 @@ def create_app(test_config=None):
 
             elif postData['event'] == "add":
                 taskName = postData['task-name']
-                taskTimeHours = postData['task-time-hours']
-                taskTimeMinutes = postData['task-time-minutes']
-                taskTimeSeconds = postData['task-time-seconds']
+                totalSeconds = postData['total-seconds']
                 try:
                     cursor.execute(
-                        "INSERT INTO tasks (user_id, task_name, task_time_hours, task_time_minutes, task_time_seconds) VALUES (?, ?, ?, ?, ?)",
-                        (session.get("user_id"), taskName, taskTimeHours,
-                         taskTimeMinutes, taskTimeSeconds),
+                        "INSERT INTO tasks (user_id, task_name, total_seconds) VALUES (?, ?, ?)",
+                        (session.get("user_id"), taskName, totalSeconds),
                     )
                     connection.commit()
 
@@ -113,13 +108,42 @@ def create_app(test_config=None):
                     newTask = {
                         'task-id': created_taskid,
                         'task-name': taskName,
-                        'task-time-hours': taskTimeHours,
-                        'task-time-minutes': taskTimeMinutes,
-                        'task-time-seconds': taskTimeSeconds,
+                        'total-seconds': totalSeconds,
                         'error': 0
                     }
 
                     return jsonify(newTask)
+
+                except Exception as e:
+                    print(e)
+                    return jsonify({"error": 1})
+
+            elif postData['event'] == "save_elasped_time":
+                task_id = postData['id']
+                elasped_seconds = postData['elasped-seconds']
+                try:
+                    cursor.execute(
+                        f"UPDATE tasks SET elasped_seconds = {elasped_seconds} WHERE id = {task_id}"
+                    )
+                    connection.commit()
+                    print(
+                        f"Updated task {task_id}'s elasped seconds to {elasped_seconds}")
+                except Exception as e:
+                    print(e)
+                    return jsonify({"error": 1})
+
+            elif postData['event'] == "get_elasped_time":
+                task_id = postData['id']
+                try:
+                    res = cursor.execute(
+                        f"SELECT elasped_seconds, total_seconds from tasks WHERE id = {task_id}"
+                    ).fetchone()
+
+                    print(
+                        f"Fetched task {task_id}'s elasped seconds of {res['elasped_seconds']} and total time {res['total_seconds']}"
+                        )
+
+                    return jsonify({"elasped-time-seconds": res["elasped_seconds"], "total-time": res["total_seconds"]})
 
                 except Exception as e:
                     print(e)

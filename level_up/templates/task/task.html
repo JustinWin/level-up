@@ -1,6 +1,4 @@
-{% extends 'base.html' %}
-{% block content %}
-{% include "nav/navbar.html" %}
+{% extends 'base.html' %} {% block content %} {% include "nav/navbar.html" %}
 
 <button class="collapsed demo-button w-50 mdc-button mdc-button--raised mdc-ripple-upgraded m-3"
 	data-bs-toggle="collapse" data-bs-target="#add-task-container" aria-expanded="false"
@@ -8,7 +6,6 @@
 	<span class="mdc-button__ripple"></span>
 	<span class="mdc-button__label">Add Task</span>
 	<i class="material-icons mdc-button__icon">expand_more</i>
-
 </button>
 
 {% include "modal.html" %}
@@ -18,52 +15,58 @@
 		<form method="post">
 			<div class="py-2">
 				<label class="mdc-text-field mdc-text-field--filled mdc-text-field--with-leading-icon">
-					<i class="material-icons mdc-text-field__icon" style="color:rgb(0, 0, 0)">task</i>
+					<i class="material-icons mdc-text-field__icon" style="color: rgb(0, 0, 0)">task</i>
 					<span class="mdc-text-field__ripple --mdc-theme-primary"></span>
 					<span class="mdc-floating-label">Task Name</span>
 					<input class="mdc-text-field__input" name="task-name" id="task-name" placeholder="Task Name"
-						required>
+						required />
 					<span class="mdc-line-ripple --mdc-theme-primary"></span>
 				</label>
 			</div>
 			<div class="py-2 d-flex">
-				<label class="mr-2 mdc-text-field mdc-text-field--filled  mdc-text-field--with-leading-icon">
-					<i class="material-icons mdc-text-field__icon" style="color:rgb(0, 0, 0)">schedule</i>
+				<label class="mr-2 mdc-text-field mdc-text-field--filled mdc-text-field--with-leading-icon">
+					<i class="material-icons mdc-text-field__icon" style="color: rgb(0, 0, 0)">schedule</i>
 					<span class="mdc-text-field__ripple --mdc-theme-primary"></span>
 					<span class="mdc-floating-label">Hours</span>
 					<input class="mdc-text-field__input" type="number" name="task-time" id="task-time-hours"
-						placeholder="Hours" min="0" max="99" required>
+						placeholder="Hours" min="0" max="99" required />
 					<span class="mdc-line-ripple --mdc-theme-primary"></span>
 				</label>
-				<label class="mx-2 mdc-text-field mdc-text-field--filled  mdc-text-field--with-leading-icon">
+				<label class="mx-2 mdc-text-field mdc-text-field--filled mdc-text-field--with-leading-icon">
 					<span class="mdc-text-field__ripple --mdc-theme-primary"></span>
 					<span class="mdc-floating-label">Minutes</span>
 					<input class="mdc-text-field__input" type="number" name="task-time" id="task-time-minutes"
-						placeholder="Minutes" min="0" max="59" required>
+						placeholder="Minutes" min="0" max="59" required />
 					<span class="mdc-line-ripple --mdc-theme-primary"></span>
 				</label>
-				<label class="ml-2 mdc-text-field mdc-text-field--filled  mdc-text-field--with-leading-icon">
+				<label class="ml-2 mdc-text-field mdc-text-field--filled mdc-text-field--with-leading-icon">
 					<span class="mdc-text-field__ripple --mdc-theme-primary"></span>
 					<span class="mdc-floating-label">Seconds</span>
 					<input class="mdc-text-field__input" type="number" name="task-time" id="task-time-seconds"
-						placeholder="Seconds" min="0" max="59" required>
+						placeholder="Seconds" min="0" max="59" required />
 					<span class="mdc-line-ripple --mdc-theme-primary"></span>
 				</label>
 			</div>
 			<button class="mdc-button mdc-button--raised mt-4 mb-2 login-button w-100" id="add-task-submit-button"
-				type="submit" value="Add Task"> <span class="mdc-button__ripple"></span> Confirm Task </button>
+				type="submit" value="Add Task">
+				<span class="mdc-button__ripple"></span> Confirm Task
+			</button>
 		</form>
 	</div>
 </div>
 <div id="snackbar-delete" class="mdc-snackbar mdc-snackbar--closed fade">
 	<div class="mdc-snackbar__surface">
-		<div class="mdc-snackbar__label" role="status" aria-live="polite">Task Deleted Sucessfully</div>
+		<div class="mdc-snackbar__label" role="status" aria-live="polite">
+			Task Deleted Sucessfully
+		</div>
 		<div class="mdc-snackbar__actions">
 			<button id="snackbar-undo" type="button" class="mdc-button mdc-snackbar__action">
-				<div class="mdc-button__ripple"></div>UNDO
+				<div class="mdc-button__ripple"></div>
+				UNDO
 			</button>
-			<button id="snackbar-dismiss" class="mdc-icon-button mdc-snackbar__dismiss material-icons"
-				title="Dismiss">close</button>
+			<button id="snackbar-dismiss" class="mdc-icon-button mdc-snackbar__dismiss material-icons" title="Dismiss">
+				close
+			</button>
 		</div>
 	</div>
 </div>
@@ -72,310 +75,32 @@
 		{% for task in tasks %}
 
 		<div id="task-id-{{ task.id }}"
-			class="m-3 w-100 card card-body text-bg-dark justify-content-center d-inline-block" style="height: 400px;">
+			class="m-3 w-100 card card-body text-bg-dark justify-content-center d-inline-block" style="height: 160px">
 			<a class="close float-end" href="#"><i class="material-icons mdc-button__icon">delete</i></a>
 			<h5 class="card-header text-center">{{ task.task_name }}</h5>
-			<div class="circle">
-				<svg width="300" viewBox="0 0 220 220">
-					<g transform="translate(110,110)">
-						<circle r="100" class="e-c-base"></circle>
-						<g transform="rotate(-90)">
-							<circle r="100" id="progress-{{ task.id }}" class="e-c-progress"
-								style="stroke-dasharray: 628.319; stroke-dashoffset: -1256.64;"></circle>
-							<g class="e-pointer" id="e-pointer-{{ task.id }}" style="transform: rotate(360deg);">
-								<circle cx="100" cy="0" r="8" class="e-c-pointer"></circle>
-							</g>
-						</g>
-					</g>
-				</svg>
+			<div class="d-flex justify-content-center align-items-center">
+				<p id="elasped-time-{{ task.id }}" class="p-1">00:00:00</p>
+				<div role="progressbar" class="mdc-linear-progress text-start">
+					<div id="progress-bar-{{ task.id }}"
+						class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+						<span class="mdc-linear-progress__bar-inner"></span>
+					</div>
+					<div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+						<span class="mdc-linear-progress__bar-inner"></span>
+					</div>
+				</div>
+				<p id="total-time-{{ task.id }}" class="p-1">00:00:00</p>
 			</div>
-			<div class="controlls">
-				<div id="remaining-time-{{ task.id }}" class="display-remain-time"></div>
+
+			<div class="controls">
 				<button class="play-pause play" id="play-pause-{{ task.id }}"></button>
 			</div>
 		</div>
 
 		{% endfor %}
 		{% endblock %}
-
 		{% block javascript %}
-		<script>
-			add_delete_funtionality_to_all_cards();
-			display_time_on_refresh();
-			// POST Function for deleting tasks
-			async function postRequest(url, data) {
-				const response = await fetch(url, {
-					method: 'POST', // or 'PUT'
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify(data)
-				});
-				let responseJson = await response.json(); // parses JSON response into native JavaScript objects
-
-				return responseJson
-			}
-			// Generic POST function for adding tasks
-			async function addTaskPost(url, data) {
-				r = await postRequest('/task', data).then(responseJson => {
-
-					// Create card element
-					let card = document.createElement("div")
-					card.id = "task-id-" + responseJson["task-id"]
-					card.classList.add("m-3", "w-100", "card", "card-body", "text-bg-dark", "justify-content-center", "d-inline-block");
-					card.style.height = "400px";
-
-					// Create delete icon
-					delete_icon = document.createElement("a");
-					delete_icon.classList.add("close", "float-end");
-					delete_icon.href = "#"
-					delete_icon.innerHTML = `<i class="material-icons mdc-button__icon">delete</i>`
-
-					// Create card header
-					let card_header = document.createElement("h5")
-					card_header.classList.add("card-header", "text-center")
-					card_header.textContent = responseJson['task-name']
-
-					// Create progress circle
-					let circle_div = document.createElement("div");
-					circle_div.classList.add("circle");
-					circle_div.innerHTML = `
-					<svg width="300" viewBox="0 0 220 220">
-						<g transform="translate(110,110)">
-							<circle r="100" class="e-c-base" />
-							<g transform="rotate(-90)">
-							<circle r="100" id="progress-${responseJson['task-id']}" class="e-c-progress" />
-							<g class="e-pointer" id="e-pointer-${responseJson['task-id']}" >
-								<circle cx="100" cy="0" r="8" class="e-c-pointer" />
-							</g>
-							</g>
-						</g>
-					</svg>
-				`;
-
-					// Create Play and Pause controls
-					let controls_div = document.createElement("div");
-					controls_div.classList.add("controlls");
-					controls_div.innerHTML = `
-					<div id="remaining-time-${responseJson['task-id']}" class="display-remain-time"></div>
-					<button class="play-pause play" id="play-pause-${responseJson['task-id']}"></button>
-				`;
-
-					// Build card
-					card.appendChild(delete_icon);
-					card.appendChild(card_header);
-					card.appendChild(circle_div);
-					card.appendChild(controls_div);
-					// Append card to task container
-					let taskListContainer = document.getElementById("task-list-container");
-					taskListContainer.append(card);
-					play_pause_display(
-						responseJson['task-id'],
-						responseJson['task-time-hours'],
-						responseJson['task-time-minutes'],
-						responseJson['task-time-seconds']
-					);
-
-				})
-				add_delete_funtionality_to_all_cards();
-
-			}
-
-			document.getElementById("add-task-submit-button").addEventListener("click", function () {
-				// Prevents refresh
-				event.preventDefault();
-				taskName = document.getElementById("task-name").value;
-				taskTimeHours = document.getElementById("task-time-hours").value;
-				taskTimeMinutes = document.getElementById("task-time-minutes").value;
-				taskTimeSeconds = document.getElementById("task-time-seconds").value;
-				addTaskPost(
-					'/task',
-					{
-						'event': 'add',
-						'task-name': taskName,
-						'task-time-hours': taskTimeHours,
-						'task-time-minutes': taskTimeMinutes,
-						'task-time-seconds': taskTimeSeconds
-					});
-			});
-
-
-
-			let snackbar_dismiss = document.getElementById("snackbar-dismiss")
-			snackbar_dismiss.addEventListener("click", function () {
-				let snackbar_delete = document.getElementById("snackbar-delete");
-				snackbar_delete.classList.remove("mdc-snackbar--open", "show")
-				snackbar_delete.classList.add('mdc-snackbar--close');
-			});
-
-			let snackbar_undo = document.getElementById("snackbar-undo")
-			snackbar_undo.addEventListener("click", (e) => {
-				recently_deleted_task = (postRequest('/task', { 'event': 'undo' }).then(responseJson => {
-					addTaskPost(
-						'/task',
-						{
-							'event': 'add',
-							'task-name': responseJson["task-name"],
-							'task-time-hours': responseJson["task-time-hours"],
-							'task-time-minutes': responseJson["task-time-minutes"],
-							'task-time-seconds': responseJson["task-time-seconds"]
-						}
-					);
-				}));
-				let snackbar_delete = document.getElementById("snackbar-delete");
-				snackbar_delete.classList.remove("mdc-snackbar--open", "show")
-				snackbar_delete.classList.add('mdc-snackbar--close');
-
-			});
-
-
-
-			// Adds delete functionality to cards
-			function add_delete_funtionality_to_all_cards() {
-				$('.close').click(function () {
-					var $target = $(this).parents(".card");
-					$target.hide('slow', function () { $target.remove(); });
-					var task_id = ($target[0].id.replace('task-id-', ''))
-					postRequest('/task', { 'event': 'delete', 'id': task_id });
-
-					// Display undo button
-					let snackbar_delete = document.getElementById("snackbar-delete");
-					snackbar_delete.classList.remove("mdc-snackbar--closed");
-					snackbar_delete.classList.add("mdc-snackbar--open", "show")
-				})
-			}
-
-			// On page refresh display times
-			function display_time_on_refresh() {
-				all_tasks = postRequest('/task', { 'event': 'display' }).then(data => {
-					all_tasks_ids = Object.keys(data);
-					for (let i = 0; i < all_tasks_ids.length; i++) {
-						task = (data[all_tasks_ids[i]]);
-						play_pause_display(
-							task["id"],
-							task["task_time_hours"],
-							task["task_time_minutes"],
-							task["task_time_seconds"]
-						);
-					}
-				})
-
-
-			}
-
-			// Parent function that add makes the timer work
-			function play_pause_display(id, input_hours, input_minutes, input_seconds) {
-				let progressBar = document.getElementById(`progress-${id}`);
-				let indicator = document.getElementById('e-indicator');
-				let pointer = document.getElementById(`e-pointer-${id}`);
-				let length = Math.PI * 2 * 100;
-				progressBar.style.strokeDasharray = length;
-
-				function update(value, timePercent) {
-					var offset = - length - length * value / (timePercent);
-					progressBar.style.strokeDashoffset = offset;
-					pointer.style.transform = `rotate(${360 * value / (timePercent)}deg)`;
-				};
-
-				//circle ends
-				const displayOutput = document.getElementById(`remaining-time-${id}`)
-				const pauseBtn = document.getElementById(`play-pause-${id}`);
-				const setterBtns = document.querySelectorAll('button[data-setter]');
-				let intervalTimer;
-				let timeLeft;
-				let wholeTime = (parseInt(input_hours) * 3600) + (parseInt(input_minutes) * 60) + parseInt(input_seconds); // manage this to set the whole time in seconds
-				let isPaused = false;
-				let isStarted = false;
-				update(wholeTime, wholeTime); //refreshes progress bar
-				displayTimeLeft(wholeTime);
-
-				function changeWholeTime(seconds) {
-					if ((wholeTime + seconds) > 0) {
-						wholeTime += seconds;
-						update(wholeTime, wholeTime);
-					}
-				}
-
-				function timer(seconds) { //counts time, takes seconds
-					let remainTime = Date.now() + (seconds * 1000);
-					displayTimeLeft(seconds);
-
-					intervalTimer = setInterval(function () {
-						timeLeft = Math.round((remainTime - Date.now()) / 1000);
-						if (timeLeft < 0) {
-							clearInterval(intervalTimer);
-							isStarted = false;
-							setterBtns.forEach(function (btn) {
-								btn.disabled = false;
-								btn.style.opacity = 1;
-							});
-							displayTimeLeft(wholeTime);
-							pauseBtn.classList.remove('pause');
-							pauseBtn.classList.add('play');
-
-							// When timer hits zero, display task completed modal
-							var task_complete_modal = new bootstrap.Modal(document.getElementById('task-complete-modal'), {
-								keyboard: false
-							})
-
-							document.getElementById("exp-gain").innerHTML = "+ " + wholeTime + " XP"
-							task_complete_modal.show();
-							function close_modal() {
-								let close_modal_backdrop = $(".modal-backdrop")
-								close_modal_backdrop.remove();
-							}
-
-							close_modal_button = $("#close-modal")[0];
-							close_modal_button.addEventListener('click', close_modal);
-
-							let content_container = $(".content");
-							let modal_backdrop = document.createElement("div");
-							modal_backdrop.classList.add("modal-backdrop", "fade", "show");
-
-							content_container.append(modal_backdrop);
-
-							postRequest('/task', { 'event': 'update', 'exp': wholeTime });
-
-							return;
-						}
-						displayTimeLeft(timeLeft);
-					}, 1000);
-				}
-				function pauseTimer(event) {
-					if (isStarted === false) {
-						timer(wholeTime);
-						isStarted = true;
-						this.classList.remove('play');
-						this.classList.add('pause');
-
-						setterBtns.forEach(function (btn) {
-							btn.disabled = true;
-							btn.style.opacity = 0.5;
-						});
-
-					} else if (isPaused) {
-						this.classList.remove('play');
-						this.classList.add('pause');
-						timer(timeLeft);
-						isPaused = isPaused ? false : true
-					} else {
-						this.classList.remove('pause');
-						this.classList.add('play');
-						clearInterval(intervalTimer);
-						isPaused = isPaused ? false : true;
-					}
-				}
-
-				function displayTimeLeft(timeLeft) { //displays time on the input
-					let hours = Math.floor(timeLeft / 3600);
-					let minutes = Math.floor((timeLeft - (hours * 3600)) / 60);
-					let seconds = timeLeft % 60;
-					let displayString = `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-					displayOutput.textContent = displayString;
-					update(timeLeft, wholeTime);
-				}
-
-				pauseBtn.addEventListener('click', pauseTimer);
-			}
-		</script>
+		<script type="text/javascript" src="../../static/js/task.js"></script>
 		{% endblock %}
+	</div>
+</div>
